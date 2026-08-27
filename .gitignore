@@ -1,1 +1,11 @@
 .idea/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+application-secret.yml
+*.application.properties
+application-secret.properties
