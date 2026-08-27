@@ -6,10 +6,10 @@ import Result from './pages/Result';
 import './App.css';
 
 const ProtectedRoute = ({ children }) => {
-    const token = localStorage.getItem('adminToken');
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
     const location = useLocation();
 
-    if (!token) {
+    if (!isAuthenticated) {
         return <Navigate to="/" state={{ from: location }} replace />;
     }
 
@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-    const isLoggedIn = !!localStorage.getItem('adminToken');
+    const isLoggedIn = !!localStorage.getItem('isAuthenticated');
 
     return (
         <BrowserRouter>

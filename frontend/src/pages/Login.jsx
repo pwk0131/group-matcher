@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoImg from '../assets/bookend_logo.png'; // 로고 이미지 불러오기
+import logoImg from '../assets/bookend_logo.png';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -13,20 +13,17 @@ export default function Login() {
         setErrorMsg(''); // 로그인 시도 시 기존 에러 메시지 초기화
 
         try {
-            // 💡 진짜 백엔드 로그인 API와 통신!
             const response = await fetch('http://localhost:8080/api/auth/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // JSON 형태로 데이터를 보낸다고 명시
+                    'Content-Type': 'application/json',
                 },
-                // 아이디와 비밀번호를 JSON 문자열로 변환하여 전송
+                credentials: 'include',
                 body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
-
-                const data = await response.json();
-                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('isAuthenticated', 'true');
                 navigate('/members');
                 window.location.reload();
             } else {
