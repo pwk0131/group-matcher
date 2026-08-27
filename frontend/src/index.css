@@ -1,111 +1,95 @@
+/* frontend/src/index.css */
+
+/* 1. 글로벌 색상 변수 선언 */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --color-bg: #ffffff;         /* 기본 하얀 배경 */
+  --color-text: #260300;       /* 진한 텍스트 (다크 브라운) */
+  --color-accent-dark: #260300;/* 진한 포인트 색상 */
+  --color-accent-light: #F6E9E5;/* 연한 포인트 색상 */
+  --color-border: #eaeaea;     /* 아주 연한 회색 테두리 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
+/* 2. 기본 초기화 및 폰트 설정 */
 body {
   margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
+/* 3. 공통 레이아웃 (모든 페이지는 이 컨테이너 안에 들어갑니다) */
+.page-container {
+  max-width: 1000px;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  padding: 40px 20px;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* 4. 공통 타이틀 */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-border);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
+/* 5. 공통 버튼 디자인 (포인트 색상 적용) */
+.btn-primary {
+  background-color: var(--color-accent-dark);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
   font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+.btn-secondary {
+  background-color: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.btn-secondary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-accent-dark);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-outline:hover {
+  border-color: var(--color-accent-dark);
+  background-color: #fafafa;
+}
+
+/* 6. 공통 입력창 디자인 */
+input[type="text"], input[type="password"], select {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus {
+  border-color: var(--color-accent-dark);
 }

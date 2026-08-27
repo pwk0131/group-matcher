@@ -1,8 +1,11 @@
 export default function Formation() {
     return (
-        <div>
-            <h2>⚙️ 조 편성 실행</h2>
-            <p>이번 모임 참석자 N명을 바탕으로 조 편성을 시작하는 버튼이 들어갈 예정입니다.</p>
+        <div className="page-container">
+            <h2 className="page-title">조 편성 세팅</h2>
+            <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#fafafa', borderRadius: '8px', border: `1px solid var(--color-border)` }}>
+                <p>이번 모임에 참석할 부원들을 선택하고 조 편성을 시작합니다.</p>
+                <button className="btn-primary" style={{ marginTop: '20px' }}>조 편성 알고리즘 실행</button>
+            </div>
         </div>
     );
 }

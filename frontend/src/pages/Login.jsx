@@ -35,13 +35,14 @@ export default function Login() {
         }
     };
 
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
-            {/* 로고 이미지 표시 */}
-            <img src={logoImg} alt="Bookend Logo" style={{ width: '200px', marginBottom: '30px' }} />
+    // ... (위의 로직은 이전과 동일) ...
 
-            <div style={{ padding: '40px', border: '1px solid #ddd', borderRadius: '10px', width: '300px' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>운영진 로그인</h2>
+    return (
+        <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '80px' }}>
+            <img src={logoImg} alt="Bookend Logo" style={{ width: '180px', marginBottom: '40px' }} />
+
+            <div style={{ padding: '40px', border: '1px solid var(--color-border)', borderRadius: '12px', width: '320px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+                <h2 style={{ textAlign: 'center', margin: '0 0 30px 0', fontSize: '24px' }}>운영진 로그인</h2>
 
                 <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <input
@@ -49,30 +50,18 @@ export default function Login() {
                         placeholder="아이디"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        style={{ padding: '10px', fontSize: '16px' }}
                     />
                     <input
                         type="password"
                         placeholder="비밀번호"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={{ padding: '10px', fontSize: '16px' }}
                     />
 
-                    {errorMsg && <div style={{ color: 'red', fontSize: '14px', textAlign: 'center', wordBreak: 'keep-all' }}>{errorMsg}</div>}
+                    {errorMsg && <div style={{ color: '#d32f2f', fontSize: '13px', textAlign: 'center' }}>{errorMsg}</div>}
 
-                    <button
-                        type="submit"
-                        style={{
-                            padding: '12px',
-                            backgroundColor: '#aa3bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            fontSize: '16px',
-                            cursor: 'pointer'
-                        }}
-                    >
+                    {/* 글로벌 포인트 버튼 사용 */}
+                    <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>
                         접속하기
                     </button>
                 </form>
