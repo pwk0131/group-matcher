@@ -1,0 +1,79 @@
+/* frontend/src/pages/Formation.css */
+
+.formation-settings {
+    background-color: #fafafa;
+    padding: 20px 25px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.setting-group label {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.setting-group input {
+    width: 80px;
+    text-align: center;
+}
+
+.member-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+/* 참석자 선택 카드 디자인 */
+.member-card {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none; /* 텍스트 드래그 방지 */
+    background-color: var(--color-bg);
+}
+
+.member-card:hover {
+    border-color: var(--color-accent-dark);
+}
+
+/* 카드가 선택(참석) 되었을 때의 포인트 스타일 */
+.member-card.selected {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent-dark);
+}
+
+.member-card.selected span {
+    font-weight: bold;
+    color: var(--color-accent-dark);
+}
+
+/* 로딩 스피너 오버레이 */
+.loading-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--color-accent-dark);
+}

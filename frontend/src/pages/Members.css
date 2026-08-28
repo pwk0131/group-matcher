@@ -38,6 +38,14 @@
     background-color: #fdfdfd;
 }
 
+.members-table tr.new-member {
+    background-color: #FFF0F0;
+}
+
+.members-table tr.new-member:hover {
+    background-color: #FFE4E4;
+}
+
 /* 체크박스 커스텀 */
 input[type="checkbox"] {
     width: 18px;

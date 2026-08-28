@@ -1,0 +1,136 @@
+.result-board {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    align-items: flex-start;
+}
+
+.team-column {
+    flex: 1;
+    min-width: 220px;
+    background-color: #fafafa;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s;
+}
+
+.team-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-accent-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.member-list {
+    min-height: 50px;
+}
+
+.member-item {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    cursor: grab;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.2s ease;
+}
+
+.member-item.new-member-card {
+    background-color: #FFF0F0;
+    border-color: #ffcdd2;
+}
+
+.member-item:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.member-item:hover {
+    border-color: var(--color-accent-dark);
+}
+
+.facilitator-badge {
+    background-color: var(--color-accent-dark);
+    color: #ffffff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.team-penalty-box {
+    background-color: #FFF0F0;
+    border: 1px solid #ffcdd2;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #c62828;
+}
+
+.penalty-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+}
+
+.history-quickview-section {
+    background-color: #fafafa;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+.history-quickview-header {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--color-accent-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.history-quickview-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.history-quickview-card {
+    min-width: 220px;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 13px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.history-quickview-card-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 6px;
+}
+
+.history-quickview-team {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}

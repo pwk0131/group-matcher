@@ -1,0 +1,59 @@
+.history-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-accent-light);
+}
+
+.history-card-header h3 {
+    margin: 0;
+    color: var(--color-accent-dark);
+    font-size: 20px;
+}
+
+.history-date {
+    font-size: 15px;
+    font-weight: normal;
+    color: #888;
+    margin-left: 8px;
+}
+
+.history-teams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.history-team-box {
+    background-color: #fafafa;
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent-dark);
+    border-radius: 6px;
+    padding: 16px;
+    min-width: 200px;
+    flex: 1;
+}
+
+.team-name {
+    font-weight: bold;
+    color: var(--color-accent-dark);
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.team-members {
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.6;
+}

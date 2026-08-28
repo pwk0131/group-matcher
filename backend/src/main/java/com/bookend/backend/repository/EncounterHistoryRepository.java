@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EncounterHistoryRepository extends JpaRepository<EncounterHistory, Long> {
 
@@ -17,4 +18,8 @@ public interface EncounterHistoryRepository extends JpaRepository<EncounterHisto
 		"AND e.memberB.memberId IN :memberIds")
 	List<EncounterHistory> findRecentHistories(@Param("memberIds") List<Long> memberIds,
 		@Param("thresholdRound") int thresholdRound);
+
+	Optional<EncounterHistory> findByMemberA_MemberIdAndMemberB_MemberId(Long memberAId, Long memberBId);
+
+	void deleteByLastMeeting_MeetingId(Long meetingId);
 }

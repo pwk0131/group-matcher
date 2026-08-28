@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	// 현재 활동 중인 회원만 모두 조회
-	List<Member> findAllByIsActiveTrue();
+	List<Member> findAllByInactiveFalse();
 }
