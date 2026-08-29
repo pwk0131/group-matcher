@@ -42,7 +42,9 @@ public class AuthController {
 
 			response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-			return ResponseEntity.ok(Map.of("message", "로그인 성공"));
+			return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, cookie.toString())
+				.body(Map.of("message", "로그인 성공"));
 		}
 
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 틀렸습니다.");
