@@ -10,11 +10,12 @@ export default function Formation() {
     const today = new Date().toISOString().split('T')[0];
     const [meetingDate, setMeetingDate] = useState(today);
 
-    // 💡 검색어 상태 추가
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         fetchActiveMembers();
@@ -23,7 +24,7 @@ export default function Formation() {
 
     const fetchActiveMembers = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/members', { credentials: 'include' });
+            const response = await fetch(`${API_BASE_URL}/api/members`, { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 const activeMembers = data.filter(m => m.isInactive === false);
@@ -38,7 +39,7 @@ export default function Formation() {
 
     const fetchLatestHistory = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/history', { credentials: 'include' });
+            const response = await fetch(`${API_BASE_URL}/api/history`, { credentials: 'include' });
             if (response.ok) {
                 const historyData = await response.json();
 
@@ -79,7 +80,7 @@ export default function Formation() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8080/api/teams/form', {
+            const response = await fetch(`${API_BASE_URL}/api/teams/form`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -90,12 +91,17 @@ export default function Formation() {
             });
 
             if (response.ok) {
-                const resultTeams = await response.json();
-                navigate('/result', { state: { teams: resultTeams, currentRound, meetingDate } });
+                const resultData = await response.json();
+                // 💡 백엔드가 예전 버전을 돌려 배열을 줄 경우를 방어하는 안전장치
+                const finalTeams = Array.isArray(resultData) ? resultData : resultData.teams;
+                const finalLogs = Array.isArray(resultData) ? [] : resultData.logs;
+
+                navigate('/result', { state: { teams: finalTeams, logs: finalLogs, currentRound, meetingDate } });
             } else {
                 alert("조 편성 중 서버 오류가 발생했습니다.");
             }
         } catch (error) {
+            console.error("통신 에러 상세:", error);
             alert("서버와 통신할 수 없습니다.");
         } finally {
             setIsLoading(false);
@@ -109,7 +115,6 @@ export default function Formation() {
     const handleSearchEnter = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-
             if (searchQuery.trim() !== '' && filteredMembers.length > 0) {
                 toggleMember(filteredMembers[0].memberId);
                 setSearchQuery('');
@@ -160,11 +165,8 @@ export default function Formation() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleSearchEnter}
                         style={{
-                            flex: 1,
-                            padding: '12px 15px',
-                            fontSize: '16px',
-                            border: '2px solid var(--color-accent-dark)',
-                            borderRadius: '6px'
+                            flex: 1, padding: '12px 15px', fontSize: '16px',
+                            border: '2px solid var(--color-accent-dark)', borderRadius: '6px'
                         }}
                     />
                 </div>
@@ -184,18 +186,12 @@ export default function Formation() {
                         </div>
                     );
                 })}
-                {filteredMembers.length === 0 && (
-                    <div style={{ color: '#888', marginTop: '10px' }}>검색 결과가 없습니다.</div>
-                )}
+                {filteredMembers.length === 0 && <div style={{ color: '#888', marginTop: '10px' }}>검색 결과가 없습니다.</div>}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button
-                    className="btn-primary"
-                    style={{ fontSize: '18px', padding: '15px 30px' }}
-                    onClick={handleFormation}
-                >
-                    조 편성 실행
+                <button className="btn-primary" style={{ fontSize: '18px', padding: '15px 30px' }} onClick={handleFormation}>
+                    조 편성 시작
                 </button>
             </div>
 

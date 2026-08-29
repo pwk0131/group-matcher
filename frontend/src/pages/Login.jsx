@@ -13,7 +13,8 @@ export default function Login() {
         setErrorMsg(''); // 로그인 시도 시 기존 에러 메시지 초기화
 
         try {
-            const response = await fetch('http://localhost:8080/api/auth/login', {
+            const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ export default function Login() {
         <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '80px' }}>
             <img src={logoImg} alt="Bookend Logo" style={{ width: '180px', marginBottom: '40px' }} />
 
-            <div style={{ padding: '40px', border: '1px solid var(--color-border)', borderRadius: '12px', width: '320px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+            <div style={{ padding: '40px', border: '1px solid var(--color-border)', borderRadius: '12px', width: '320px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)'}}>
                 <h2 style={{ textAlign: 'center', margin: '0 0 30px 0', fontSize: '24px' }}>운영진 로그인</h2>
 
                 <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

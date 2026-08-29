@@ -5,6 +5,7 @@ export default function Members() {
     const [members, setMembers] = useState([]);
     const [newName, setNewName] = useState('');
     const [newRole, setNewRole] = useState('NEW');
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         fetchMembers();
@@ -12,7 +13,7 @@ export default function Members() {
 
     const fetchMembers = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/members', { credentials: 'include' });
+            const response = await fetch(`${API_BASE_URL}/api/members`, { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 setMembers(data);
@@ -35,7 +36,7 @@ export default function Members() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/members', {
+            const response = await fetch(`${API_BASE_URL}/api/members`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -56,7 +57,7 @@ export default function Members() {
         setMembers(members.map(m => m.memberId === id ? { ...m, [field]: value } : m));
 
         try {
-            await fetch(`http://localhost:8080/api/members/${id}`, {
+            await fetch(`${API_BASE_URL}/api/members/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -73,7 +74,7 @@ export default function Members() {
         setMembers(members.filter(m => m.memberId !== id));
 
         try {
-            await fetch(`http://localhost:8080/api/members/${id}`, {
+            await fetch(`${API_BASE_URL}/api/members/${id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

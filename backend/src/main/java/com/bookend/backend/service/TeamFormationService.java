@@ -2,9 +2,9 @@ package com.bookend.backend.service;
 
 import com.bookend.backend.dto.MemberDto;
 import com.bookend.backend.dto.TeamFormationRequest;
+import com.bookend.backend.dto.TeamFormationResponse;
 import com.bookend.backend.dto.TeamSaveRequest;
 import com.bookend.backend.engine.HistoryMatrix;
-import com.bookend.backend.engine.Team;
 import com.bookend.backend.engine.TeamFormationEngine;
 import com.bookend.backend.entity.EncounterHistory;
 import com.bookend.backend.entity.Meeting;
@@ -32,9 +32,9 @@ public class TeamFormationService {
 
 	// 조 편성 알고리즘 실행
 	@Transactional(readOnly = true)
-	public List<Team> generateTeams(TeamFormationRequest request) {
+	public TeamFormationResponse generateTeams(TeamFormationRequest request) {
 
-		// 1. 전달받은 ID를 기반으로 금일 참석자 엔티티 조회 후 DTO로 변환
+		// 전달받은 ID를 기반으로 금일 참석자 엔티티 조회 후 DTO로 변환
 		List<Member> attendees = memberRepository.findAllById(request.attendeeIds());
 		List<MemberDto> attendeeDtos = attendees.stream()
 			.map(MemberDto::from)
@@ -44,15 +44,15 @@ public class TeamFormationService {
 		int totalMembers = attendeeDtos.size();
 		int optimalTeamCount = (int) Math.ceil(totalMembers / 4.0);
 
-		// 2. 과거 만남 이력(밴 리스트) 조회
-		// 현재 회차 기준으로 3회차 전까지만 조회 (4회차 차이부터는 페널티 0점이	므로 무시)
+		// 과거 만남 이력(밴 리스트) 조회
+		// 현재 회차 기준으로 3회차 전까지만 조회 (4회차 차이부터는 페널티 0점이므로 무시)
 		int thresholdRound = Math.max(0, request.currentRound() - 3);
 		List<EncounterHistory> histories = historyRepository.findRecentHistories(request.attendeeIds(), thresholdRound);
 
-		// 3. 초고속 조회를 위한 히스토리 매트릭스 메모리 로드
+		// 초고속 조회를 위한 히스토리 매트릭스 메모리 로드
 		HistoryMatrix matrix = new HistoryMatrix(histories);
 
-		// 4. 알고리즘 코어 엔진 실행 및 결과 반환
+		// 알고리즘 코어 엔진 실행 및 결과 반환
 		return engine.formTeams(attendeeDtos, matrix, optimalTeamCount, request.currentRound());
 
 		// (참고: 최종 배포 전에는 여기서 짜여진 조(teams)를 TeamAssignment 테이블에 INSERT 하고,
@@ -61,7 +61,7 @@ public class TeamFormationService {
 
 	@Transactional
 	public void saveTeams(TeamSaveRequest request) {
-		// 1. 이번 회차(Meeting) 정보가 DB에 있으면 가져오고, 없으면 새로 만듭니다.
+		// 이번 회차(Meeting) 정보가 DB에 있으면 가져오고, 없으면 새로 만듭니다.
 		Meeting meeting = meetingRepository.findByRoundNumber(request.currentRound())
 			.orElseGet(() -> {
 				Meeting newMeeting = new Meeting();
@@ -70,7 +70,7 @@ public class TeamFormationService {
 				return meetingRepository.save(newMeeting);
 			});
 
-		// 2. 확정된 조(Team)를 하나씩 돌면서 짝꿍 기록을 남깁니다.
+		// 확정된 조(Team)를 하나씩 돌면서 짝꿍 기록을 남깁니다.
 		for (TeamSaveRequest.TeamData team : request.teams()) {
 			for (TeamSaveRequest.MemberData memberData : team.members()) {
 				Member member = memberRepository.findById(memberData.memberId()).orElseThrow();

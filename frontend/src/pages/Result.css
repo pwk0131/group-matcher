@@ -134,3 +134,35 @@
     margin-bottom: 4px;
     line-height: 1.4;
 }
+
+/* ... 기존 코드 유지 ... */
+
+.log-console-container {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.log-console-header {
+    background-color: #2d2d2d;
+    color: #ccc;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.log-console-body {
+    padding: 15px;
+    max-height: 250px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #a6e22e; /* 형광 연두색 텍스트 */
+    white-space: pre-wrap;
+}

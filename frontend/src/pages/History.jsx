@@ -3,6 +3,7 @@ import './History.css';
 
 export default function History() {
     const [historyList, setHistoryList] = useState([]);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         fetchHistory();
@@ -10,7 +11,7 @@ export default function History() {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/history', { credentials: 'include' });
+            const res = await fetch(`${API_BASE_URL}/api/history`, { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 setHistoryList(data);
@@ -24,7 +25,7 @@ export default function History() {
         if (!window.confirm(`정말 제 ${roundNumber}회차 모임 기록을 삭제하시겠습니까?\n(해당 회차의 조 편성 결과 및 짝꿍 페널티 이력이 모두 삭제됩니다.)`)) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/history/${meetingId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/history/${meetingId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -54,17 +55,19 @@ export default function History() {
                         <div key={history.meetingId} className="history-card">
                             <div className="history-card-header">
                                 <h3>
-                                    {String(history.roundNumber) === "0" ? "🎉 OT (0회차)" : `제 ${history.roundNumber}회차`} 조 편성
+                                    {String(history.roundNumber) === "0" ? "🎉 OT (0회차)" : `제 ${history.roundNumber}회차`} 조
+                                    편성
                                     <span className="history-date">({history.meetingDate})</span>
                                 </h3>
-                                <button className="btn-outline" onClick={() => handleDelete(history.meetingId, history.roundNumber)}>기록 삭제</button>
+                                <button className="btn-outline"
+                                        onClick={() => handleDelete(history.meetingId, history.roundNumber)}>기록 삭제
+                                </button>
                             </div>
 
                             <div className="history-teams">
-                                {/* 1조, 2조 등 팀별로 렌더링 */}
                                 {Object.entries(history.teams).map(([teamName, members]) => (
                                     <div key={teamName} className="history-team-box">
-                                        <div className="team-name">{teamName}</div>
+                                        <div className="team-name-badge">{teamName}</div>
                                         <div className="team-members">
                                             {members.join(', ')}
                                         </div>

@@ -1,6 +1,7 @@
 package com.bookend.backend.controller;
 
 import com.bookend.backend.dto.TeamFormationRequest;
+import com.bookend.backend.dto.TeamFormationResponse;
 import com.bookend.backend.dto.TeamSaveRequest;
 import com.bookend.backend.engine.Team;
 import com.bookend.backend.service.TeamFormationService;
@@ -20,8 +21,8 @@ public class TeamController {
 
 	// POST http://localhost:8080/api/teams/form
 	@PostMapping("/form")
-	public ResponseEntity<List<Team>> formTeams(@RequestBody TeamFormationRequest request) {
-		List<Team> result = teamService.generateTeams(request);
+	public ResponseEntity<TeamFormationResponse> formTeams(@RequestBody TeamFormationRequest request) {
+		TeamFormationResponse result = teamService.generateTeams(request);
 		return ResponseEntity.ok(result);
 	}
 
