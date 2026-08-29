@@ -47,4 +47,23 @@ public class AuthController {
 
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 틀렸습니다.");
 	}
+
+	@GetMapping("/check")
+	public ResponseEntity<?> checkAuth() {
+		return ResponseEntity.ok(Map.of("isAuthenticated", true));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletResponse response) {
+		ResponseCookie cookie = ResponseCookie.from("adminToken", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.path("/")
+			.maxAge(0)
+			.build();
+
+		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+		return ResponseEntity.ok(Map.of("message", "로그아웃 성공"));
+	}
 }

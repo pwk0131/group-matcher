@@ -1,15 +1,15 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Members from './pages/Members';
 import Formation from './pages/Formation';
 import Result from './pages/Result';
 import History from './pages/History';
-import './index.css'; // 글로벌 CSS 적용
+import './index.css';
 
-const ProtectedRoute = ({ children }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
+// ProtectedRoute가 이제 로컬스토리지가 아닌 부모의 state를 받습니다.
+const ProtectedRoute = ({ children, isAuthenticated }) => {
     const location = useLocation();
-
     if (!isAuthenticated) {
         return <Navigate to="/" state={{ from: location }} replace />;
     }
@@ -27,34 +27,71 @@ const navLinkStyle = ({ isActive }) => ({
 });
 
 function App() {
-    const isLoggedIn = !!localStorage.getItem('isAuthenticated');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isChecking, setIsChecking] = useState(true); // 처음에 로그인 상태를 확인 중인지 여부
+
+    // 환경변수 (Vercel 프록시를 쓰신다면 빈 문자열이어도 상관없습니다)
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    // 앱이 처음 켜질 때 백엔드에 쿠키가 유효한지 물어봅니다.
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/auth/check`, {
+                    credentials: 'include' // 쿠키를 담아서 보냅니다.
+                });
+                if (res.ok) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                setIsAuthenticated(false);
+            } finally {
+                setIsChecking(false); // 확인 끝
+            }
+        };
+        checkLoginStatus();
+    }, [API_BASE_URL]);
+
+    const handleLogout = async () => {
+        try {
+            await fetch(`${API_BASE_URL}/api/auth/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch(e) {}
+        setIsAuthenticated(false);
+    };
+
+    if (isChecking) {
+        return <div style={{ textAlign: 'center', marginTop: '50px' }}>로그인 상태 확인 중...</div>;
+    }
 
     return (
         <BrowserRouter>
-            {isLoggedIn && (
+            {isAuthenticated && (
                 <header style={{ borderBottom: '1px solid var(--color-border)' }}>
                     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '15px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '30px' }}>📚 Bookend</span>
-
-                        {/* 1. 기본 메뉴들을 왼쪽으로 모아줍니다 */}
+                        <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '30px' }}>Bookend</span>
                         <NavLink to="/members" style={navLinkStyle}>부원 관리</NavLink>
-                        <NavLink to="/history" style={navLinkStyle}>만남 이력</NavLink>
-                        <NavLink to="/formation" style={navLinkStyle}>조 편성 세팅</NavLink>
-
+                        <NavLink to="/history" style={navLinkStyle}>역대 조 편성</NavLink>
+                        <NavLink to="/formation" style={navLinkStyle}>새 조 편성</NavLink>
                         <div style={{ marginLeft: 'auto' }}>
-                            <NavLink to="/result" style={navLinkStyle}>결과 및 튜닝</NavLink>
+                            <button onClick={handleLogout} className="btn-outline" style={{ padding: '6px 12px' }}>로그아웃</button>
                         </div>
-
                     </div>
                 </header>
             )}
-
             <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
-                <Route path="/formation" element={<ProtectedRoute><Formation /></ProtectedRoute>} />
-                <Route path="/result" element={<ProtectedRoute><Result /></ProtectedRoute>} />
-                <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+                <Route path="/" element={
+                    isAuthenticated ? <Navigate to="/members" replace /> : <Login onLoginSuccess={() => setIsAuthenticated(true)} />
+                } />
+
+                <Route path="/members" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Members /></ProtectedRoute>} />
+                <Route path="/formation" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Formation /></ProtectedRoute>} />
+                <Route path="/result" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Result /></ProtectedRoute>} />
+                <Route path="/history" element={<ProtectedRoute isAuthenticated={isAuthenticated}><History /></ProtectedRoute>} />
             </Routes>
         </BrowserRouter>
     );

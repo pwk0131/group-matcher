@@ -10,7 +10,7 @@ export default function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setErrorMsg(''); // 로그인 시도 시 기존 에러 메시지 초기화
+        setErrorMsg('');
 
         try {
             const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -24,9 +24,8 @@ export default function Login() {
             });
 
             if (response.ok) {
-                localStorage.setItem('isAuthenticated', 'true');
+                onLoginSuccess();
                 navigate('/members');
-                window.location.reload();
             } else {
                 const errorText = await response.text();
                 setErrorMsg(errorText || '아이디 또는 비밀번호가 틀렸습니다.');
