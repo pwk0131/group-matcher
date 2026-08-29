@@ -1,5 +1,6 @@
 package com.bookend.backend.config;
 
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +34,12 @@ public class SecurityConfig {
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOriginPattern("*");
+
+		config.setAllowedOrigins(List.of(
+			"http://localhost:5173", // 로컬 개발용
+			"https://bookend-frontend-rouge.vercel.app"
+		));
+
 		config.addAllowedMethod("*");
 		config.addAllowedHeader("*");
 		config.setAllowCredentials(true);
