@@ -29,12 +29,10 @@ public class SecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/auth/login").permitAll()
-				.anyRequest().permitAll()
+				.requestMatchers("/api/auth/login", "/api/auth/check").permitAll()
+				.anyRequest().authenticated()
 			).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

@@ -38,7 +38,7 @@ function App() {
         const checkLoginStatus = async () => {
             try {
                 const res = await fetch(`${API_BASE_URL}/api/auth/check`, {
-                    credentials: 'include' // 쿠키를 담아서 보냅니다.
+                    credentials: 'include'
                 });
                 if (res.ok) {
                     setIsAuthenticated(true);
