@@ -214,8 +214,31 @@ export default function Formation() {
 
             {isLoading && (
                 <div className="loading-overlay">
-                    <div style={{ fontSize: '40px', marginBottom: '20px' }}>⏳</div>
-                    과거 만남 이력을 분석하여 최적의 조를 구성하고 있습니다...
+                    {/* 1. 조 편성 애니메이션 */}
+                    <div className="formation-loader-container">
+                        <div className="team-box">
+                            <div className="member-dot"></div>
+                            <div className="member-dot"></div>
+                        </div>
+                        <div className="team-box">
+                            <div className="member-dot"></div>
+                            <div className="member-dot"></div>
+                        </div>
+                        <div className="team-box">
+                            <div className="member-dot"></div>
+                            <div className="member-dot"></div>
+                        </div>
+                    </div>
+
+                    {/* 2. 안내 문구 */}
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-accent-dark)', marginBottom: '12px' }}>
+                        최적의 조 편성 중...
+                    </div>
+                    <div style={{ fontSize: '15px', color: '#555', textAlign: 'center', lineHeight: '1.6' }}>
+                        과거 만남 기록과 패널티를 분석하여<br/>
+                        적절한 조합을 찾고 있습니다<br/>
+                        <span style={{ fontSize: '13px', color: '#888' }}>(무료 서버 환경으로 최대 1분 소요될 수 있습니다)</span>
+                    </div>
                 </div>
             )}
         </div>

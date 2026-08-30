@@ -77,3 +77,57 @@
     font-weight: bold;
     color: var(--color-accent-dark);
 }
+
+/* --- 조 편성 전용 로딩 애니메이션 --- */
+.formation-loader-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* 팀을 나타내는 빈 상자 */
+.team-box {
+    width: 50px;
+    height: 50px;
+    border: 2px dashed var(--color-accent-dark);
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 사람을 나타내는 알록달록한 원 */
+.member-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    opacity: 0;
+    /* 차례대로 통통 튀어 들어오는 애니메이션 */
+    animation: joinTeam 1.5s infinite alternate;
+}
+
+/* 각 점마다 색상과 들어오는 타이밍(delay)을 다르게 설정 */
+.team-box:nth-child(1) .member-dot:nth-child(1) { background-color: #FF6B6B; animation-delay: 0.1s; }
+.team-box:nth-child(1) .member-dot:nth-child(2) { background-color: #4ECDC4; animation-delay: 0.3s; }
+
+.team-box:nth-child(2) .member-dot:nth-child(1) { background-color: #45B7D1; animation-delay: 0.5s; }
+.team-box:nth-child(2) .member-dot:nth-child(2) { background-color: #FFA07A; animation-delay: 0.7s; }
+
+.team-box:nth-child(3) .member-dot:nth-child(1) { background-color: #9B59B6; animation-delay: 0.9s; }
+.team-box:nth-child(3) .member-dot:nth-child(2) { background-color: #F7DC6F; animation-delay: 1.1s; }
+
+/* 위에서부터 아래로 쏙! 들어오는 키프레임 */
+@keyframes joinTeam {
+    0%, 20% { transform: scale(0) translateY(-30px); opacity: 0; }
+    60%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* 기존 오버레이에 블러 효과 추가 (선택사항) */
+.loading-overlay {
+    backdrop-filter: blur(3px);
+}

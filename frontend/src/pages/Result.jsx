@@ -17,6 +17,8 @@ export default function Result() {
     const [logs, setLogs] = useState([]);
     const [isLogOpen, setIsLogOpen] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -33,6 +35,7 @@ export default function Result() {
     }, [location, navigate]);
 
     const fetchHistoryAndInitialize = async (initialTeams, round) => {
+        setIsLoading(true);
         try {
             const res = await fetch(`${API_BASE_URL}/api/history`, { credentials: 'include' });
             if (res.ok) {
@@ -67,6 +70,8 @@ export default function Result() {
             }
         } catch (error) {
             console.error("이력 로딩 실패", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -80,7 +85,6 @@ export default function Result() {
                 const m2 = members[j].name;
                 const lastRound = matrix[m1]?.[m2];
 
-                // 💡 0회차 버그 방어 코드 (typeof 검사)
                 if (typeof lastRound === 'number') {
                     const delta = round - lastRound;
                     if (delta > 0 && delta < 4) {
@@ -154,6 +158,36 @@ export default function Result() {
             alert("서버와 통신할 수 없습니다.");
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+                {/* 앞서 Formation.css에 만든 조 편성 애니메이션 CSS 클래스를 그대로 재사용합니다 */}
+                <div className="formation-loader-container">
+                    <div className="team-box">
+                        <div className="member-dot"></div>
+                        <div className="member-dot"></div>
+                    </div>
+                    <div className="team-box">
+                        <div className="member-dot"></div>
+                        <div className="member-dot"></div>
+                    </div>
+                    <div className="team-box">
+                        <div className="member-dot"></div>
+                        <div className="member-dot"></div>
+                    </div>
+                </div>
+
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-accent-dark)', marginBottom: '12px' }}>
+                    결과를 분석하고 있습니다...
+                </div>
+                <div style={{ fontSize: '15px', color: '#555', textAlign: 'center', lineHeight: '1.6' }}>
+                    편성된 조와 과거 만남 기록을 비교하여<br/>
+                    충돌 여부 및 패널티를 계산 중입니다.
+                </div>
+            </div>
+        );
+    }
 
     if (teams.length === 0) return null;
 
