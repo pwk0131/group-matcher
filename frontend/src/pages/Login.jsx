@@ -35,8 +35,6 @@ export default function Login({ onLoginSuccess }) {
         }
     };
 
-    // ... (위의 로직은 이전과 동일) ...
-
     return (
         <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '80px' }}>
             <img src={logoImg} alt="Bookend Logo" style={{ width: '180px', marginBottom: '40px' }} />
@@ -60,7 +58,6 @@ export default function Login({ onLoginSuccess }) {
 
                     {errorMsg && <div style={{ color: '#d32f2f', fontSize: '13px', textAlign: 'center' }}>{errorMsg}</div>}
 
-                    {/* 글로벌 포인트 버튼 사용 */}
                     <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>
                         접속하기
                     </button>

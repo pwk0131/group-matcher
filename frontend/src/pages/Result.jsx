@@ -204,7 +204,6 @@ export default function Result() {
                 </div>
             </div>
 
-            {/* 💡 과거 이력 퀵뷰 영역 */}
             {historyList.length > 0 && (
                 <div className="history-quickview-section">
                     <div className="history-quickview-header">
@@ -228,7 +227,6 @@ export default function Result() {
                 </div>
             )}
 
-            {/* 💡 알고리즘 로그 토글 버튼 & 터미널 */}
             <div style={{ marginBottom: '15px' }}>
                 <button
                     className="btn-outline"
@@ -253,7 +251,6 @@ export default function Result() {
                 </div>
             )}
 
-            {/* 칸반 보드 영역 */}
             <div className="result-board">
                 {teams.map((team, teamIndex) => (
                     <div key={team.teamName || teamIndex} className="team-column" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, teamIndex)}>

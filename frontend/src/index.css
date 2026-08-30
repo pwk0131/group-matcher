@@ -216,3 +216,9 @@ input:focus, select:focus {
   line-height: 1.6;
   word-break: keep-all;
 }
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

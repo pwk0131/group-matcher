@@ -180,7 +180,6 @@ export default function Formation() {
 
             <div className="member-grid">
                 {isFetchingData ? (
-                    /* 로딩 중일 때 그리드 전체를 차지하도록 gridColumn 설정 */
                     <div style={{ gridColumn: '1 / -1' }}>
                         <div className="inline-loading-container" style={{ padding: '30px 0' }}>
                             <div className="spinner small"></div>
@@ -214,7 +213,6 @@ export default function Formation() {
 
             {isLoading && (
                 <div className="loading-overlay">
-                    {/* 1. 조 편성 애니메이션 */}
                     <div className="formation-loader-container">
                         <div className="team-box">
                             <div className="member-dot"></div>
@@ -230,7 +228,6 @@ export default function Formation() {
                         </div>
                     </div>
 
-                    {/* 2. 안내 문구 */}
                     <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-accent-dark)', marginBottom: '12px' }}>
                         최적의 조 편성 중...
                     </div>
