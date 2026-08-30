@@ -39,8 +39,10 @@ function App() {
         if (isChecking) {
             interval = setInterval(() => {
                 setProgress((prev) => {
-                    if (prev < 90) return prev + (Math.random() * 0.64 + 0.4);
-                    if (prev < 99) return prev + (Math.random() * 0.1 + 0.05);
+                    if (prev < 99) {
+                        const nextProgress = prev + (Math.random() * 0.72 + 0.3);
+                        return nextProgress > 99 ? 99 : nextProgress;
+                    }
                     return 99;
                 });
             }, 800);
@@ -89,14 +91,14 @@ function App() {
         return (
             <div className="global-loading-container">
                 <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px'}}>
+                    <div className="loading-text" style={{fontSize: '20px', margin: 0}}>서버와 연결 중입니다...</div>
                     <div className="spinner"
                          style={{width: '24px', height: '24px', borderWidth: '3px', marginBottom: 0}}></div>
-                    <div className="loading-text" style={{fontSize: '20px', margin: 0}}>서버와 연결 중입니다...</div>
                 </div>
 
                 <div className="progress-wrapper">
                     <div className="progress-container">
-                        <div className="progress-bar" style={{width: `${Math.min(progress, 100)}%`}}></div>
+                    <div className="progress-bar" style={{width: `${Math.min(progress, 100)}%`}}></div>
                     </div>
                     <div className="progress-text">{Math.floor(progress)}%</div>
                 </div>
