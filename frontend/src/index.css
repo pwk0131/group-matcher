@@ -150,75 +150,70 @@ input:focus, select:focus {
 }
 
 .server-explanation-box {
-  background-color: #fafafa;
+  background-color: #f8f9fa;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 8px;
+  padding: 18px 24px;
   margin-top: 30px;
-  max-width: 450px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  max-width: 420px;
+  text-align: left; /* 읽기 편하도록 좌측 정렬 */
+}
+
+.explanation-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .explanation-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   color: var(--color-accent-dark);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.server-sleep-diagram {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.diagram-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.diagram-icon {
-  font-size: 36px;
-}
-
-.diagram-arrow {
-  font-size: 20px;
-  color: #ccc;
-  margin-top: -20px;
-}
-
-.diagram-label {
-  font-size: 13px;
-  color: #666;
-  font-weight: bold;
-}
-
-.waking-clock {
-  animation: shake 2s infinite ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
+  margin: 0;
 }
 
 .explanation-desc {
-  font-size: 14px;
-  color: #555;
+  font-size: 13.5px;
+  color: #666;
   line-height: 1.6;
   word-break: keep-all;
+  margin: 0;
 }
 
 #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.progress-wrapper {
+  width: 100%;
+  max-width: 350px;
+  margin: 20px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-container {
+  width: 100%;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--color-accent-dark);
+  transition: width 0.5s ease-out; /* 게이지가 부드럽게 차오르도록 설정 */
+}
+
+.progress-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-accent-dark);
+  font-variant-numeric: tabular-nums; /* 숫자가 흔들리지 않게 고정 */
 }

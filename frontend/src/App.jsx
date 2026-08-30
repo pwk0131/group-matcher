@@ -8,7 +8,6 @@ import History from './pages/History';
 import Footer from './components/Footer';
 import './index.css';
 
-// ProtectedRoute가 이제 로컬스토리지가 아닌 부모의 state를 받습니다.
 const ProtectedRoute = ({ children, isAuthenticated }) => {
     const location = useLocation();
     if (!isAuthenticated) {
@@ -31,7 +30,23 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
 
+    const [progress, setProgress] = useState(0);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    useEffect(() => {
+        let interval;
+        if (isChecking) {
+            interval = setInterval(() => {
+                setProgress((prev) => {
+                    if (prev < 90) return prev + (Math.random() * 0.64 + 0.4);
+                    if (prev < 99) return prev + (Math.random() * 0.1 + 0.05);
+                    return 99;
+                });
+            }, 800);
+        }
+        return () => clearInterval(interval);
+    }, [isChecking]);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -39,17 +54,24 @@ function App() {
                 const res = await fetch(`${API_BASE_URL}/api/auth/check`, {
                     credentials: 'include'
                 });
+
+                setProgress(100);
+                await new Promise(resolve => setTimeout(resolve, 600));
+
                 if (res.ok) {
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);
                 }
             } catch (error) {
+                setProgress(100);
+                await new Promise(resolve => setTimeout(resolve, 600));
                 setIsAuthenticated(false);
             } finally {
-                setIsChecking(false); // 확인 끝
+                setIsChecking(false);
             }
         };
+
         checkLoginStatus();
     }, [API_BASE_URL]);
 
@@ -66,39 +88,32 @@ function App() {
     if (isChecking) {
         return (
             <div className="global-loading-container">
-                <div className="spinner"></div>
-                <div className="loading-text" style={{ fontSize: '20px' }}>서버와 연결 중입니다...</div>
-                <div className="loading-subtext" style={{ fontSize: '15px' }}>
-                    무료 서버로 배포한 사이트라 초기 연결이 많이 느려요.<br/>
-                    <b>최대 3분 정도</b> 소요될 수 있으니 창을 닫지 말고 조금만 기다려주세요
+                <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px'}}>
+                    <div className="spinner"
+                         style={{width: '24px', height: '24px', borderWidth: '3px', marginBottom: 0}}></div>
+                    <div className="loading-text" style={{fontSize: '20px', margin: 0}}>서버와 연결 중입니다...</div>
+                </div>
+
+                <div className="progress-wrapper">
+                    <div className="progress-container">
+                        <div className="progress-bar" style={{width: `${Math.min(progress, 100)}%`}}></div>
+                    </div>
+                    <div className="progress-text">{Math.floor(progress)}%</div>
+                </div>
+
+                <div className="loading-subtext" style={{fontSize: '15px'}}>
+                    무료 서버로 배포한 사이트라 초기 연결이 느려요.😥<br/>
+                    <b>1분 30초 ~ 3분 정도</b> 소요될 수 있으니 조금만 기다려주세요
                 </div>
 
                 <div className="server-explanation-box">
-                    <div className="explanation-title">
-                        <span>🤔</span> 왜 이렇게 오래 걸리나요?
+                    <div className="explanation-header">
+                        <span style={{fontSize: '16px'}}>💡</span>
+                        <div className="explanation-title">초기 연결이 지연되는 이유</div>
                     </div>
-
-                    {/* 그림 (이모지 다이어그램) */}
-                    <div className="server-sleep-diagram">
-                        <div className="diagram-step">
-                            <span className="diagram-icon">💤</span>
-                            <span className="diagram-label">서버 깊은 잠</span>
-                        </div>
-                        <div className="diagram-arrow">▶</div>
-                        <div className="diagram-step">
-                            <span className="diagram-icon waking-clock">⏰</span>
-                            <span className="diagram-label">기상 및 준비</span>
-                        </div>
-                        <div className="diagram-arrow">▶</div>
-                        <div className="diagram-step">
-                            <span className="diagram-icon">🚀</span>
-                            <span className="diagram-label">연결 완료!</span>
-                        </div>
-                    </div>
-
                     <div className="explanation-desc">
-                        오랫동안 방문자가 없으면 서버가 에너지를 절약하기 위해 <b>'수면 모드'</b>에 들어갑니다.<br/>
-                        지금 여러분의 접속 요청을 받고 <b>서버가 다시 잠에서 깨어나 일할 준비를 하는 중</b>이라 시간이 조금 걸리고 있어요
+                        장기간 방문자가 없으면 무료 서버가 자원을 절약하기 위해 <b>수면 모드</b>로 전환됩니다.<br/><br/>
+                        현재 요청을 받고 <b>서버가 다시 작업을 준비하는 중</b>이므로 약간의 대기 시간이 발생합니다.
                     </div>
                 </div>
             </div>
@@ -107,10 +122,16 @@ function App() {
 
     return (
         <BrowserRouter>
-            {/* 1. 헤더 영역 (상단 고정) */}
             {isAuthenticated && (
-                <header style={{ borderBottom: '1px solid var(--color-border)' }}>
-                    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '15px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <header style={{borderBottom: '1px solid var(--color-border)'}}>
+                    <div style={{
+                        maxWidth: '1000px',
+                        margin: '0 auto',
+                        padding: '15px 20px',
+                        display: 'flex',
+                        gap: '10px',
+                        alignItems: 'center'
+                    }}>
                         <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '30px' }}>Bookend</span>
                         <NavLink to="/members" style={navLinkStyle}>회원 관리</NavLink>
                         <NavLink to="/history" style={navLinkStyle}>조 편성 기록</NavLink>
@@ -122,7 +143,6 @@ function App() {
                 </header>
             )}
 
-            {/* 2. 메인 컨텐츠 영역 (flexGrow: 1을 주어 빈 공간을 모두 차지하게 함) */}
             <main style={{ flexGrow: 1}}>
                 <Routes>
                     <Route path="/" element={
@@ -135,7 +155,6 @@ function App() {
                 </Routes>
             </main>
 
-            {/* 3. 푸터 영역 (항상 맨 아래에 위치하게 됨) */}
             <Footer />
         </BrowserRouter>
     );
