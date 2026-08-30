@@ -148,3 +148,71 @@ input:focus, select:focus {
   height: 35px;
   border-width: 4px;
 }
+
+.server-explanation-box {
+  background-color: #fafafa;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 30px;
+  max-width: 450px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.explanation-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--color-accent-dark);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.server-sleep-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.diagram-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.diagram-icon {
+  font-size: 36px;
+}
+
+.diagram-arrow {
+  font-size: 20px;
+  color: #ccc;
+  margin-top: -20px;
+}
+
+.diagram-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: bold;
+}
+
+.waking-clock {
+  animation: shake 2s infinite ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.explanation-desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  word-break: keep-all;
+}

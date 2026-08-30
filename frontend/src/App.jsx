@@ -68,10 +68,41 @@ function App() {
         return (
             <div className="global-loading-container">
                 <div className="spinner"></div>
-                <div className="loading-text">서버와 연결 중입니다...</div>
-                <div className="loading-subtext">
-                    무료 서버로 배포한 사이트라 초기 로딩이 많이 느려요.<br/>
-                    최대 1분..? 정도 소요될 수 있으니 조금만 기다려주세요
+                <div className="loading-text" style={{ fontSize: '20px' }}>서버와 연결 중입니다...</div>
+                <div className="loading-subtext" style={{ fontSize: '15px' }}>
+                    무료 서버로 배포한 사이트라 초기 연결이 많이 느려요.<br/>
+                    <b>최대 3분 정도</b> 소요될 수 있으니 창을 닫지 말고 조금만 기다려주세요
+                </div>
+
+                {/* --- 친절한 설명과 그림 영역 --- */}
+                <div className="server-explanation-box">
+                    <div className="explanation-title">
+                        <span>🤔</span> 왜 이렇게 오래 걸리나요?
+                    </div>
+
+                    {/* 그림 (이모지 다이어그램) */}
+                    <div className="server-sleep-diagram">
+                        <div className="diagram-step">
+                            <span className="diagram-icon">💤</span>
+                            <span className="diagram-label">서버 깊은 잠</span>
+                        </div>
+                        <div className="diagram-arrow">▶</div>
+                        <div className="diagram-step">
+                            <span className="diagram-icon waking-clock">⏰</span>
+                            <span className="diagram-label">기상 및 준비</span>
+                        </div>
+                        <div className="diagram-arrow">▶</div>
+                        <div className="diagram-step">
+                            <span className="diagram-icon">🚀</span>
+                            <span className="diagram-label">연결 완료!</span>
+                        </div>
+                    </div>
+
+                    {/* 비전문가를 위한 쉬운 설명 */}
+                    <div className="explanation-desc">
+                        오랫동안 방문자가 없으면 서버가 에너지를 절약하기 위해 <b>'수면 모드'</b>에 들어갑니다.<br/>
+                        지금 여러분의 접속 요청을 받고 <b>서버가 다시 잠에서 깨어나 일할 준비를 하는 중</b>이라 시간이 조금 걸리고 있어요
+                    </div>
                 </div>
             </div>
         );
