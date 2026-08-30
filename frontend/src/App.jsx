@@ -65,7 +65,16 @@ function App() {
     };
 
     if (isChecking) {
-        return <div style={{ textAlign: 'center', marginTop: '50px' }}>로그인 상태 확인 중...</div>;
+        return (
+            <div className="global-loading-container">
+                <div className="spinner"></div>
+                <div className="loading-text">서버와 연결 중입니다...</div>
+                <div className="loading-subtext">
+                    무료 서버로 배포한 사이트라 초기 로딩이 많이 느려요.<br/>
+                    최대 1분..? 정도 소요될 수 있으니 조금만 기다려주세요
+                </div>
+            </div>
+        );
     }
 
     return (
