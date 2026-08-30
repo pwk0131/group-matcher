@@ -3,6 +3,8 @@ import './History.css';
 
 export default function History() {
     const [historyList, setHistoryList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -10,6 +12,7 @@ export default function History() {
     }, []);
 
     const fetchHistory = async () => {
+        setIsLoading(true);
         try {
             const res = await fetch(`${API_BASE_URL}/api/history`, { credentials: 'include' });
             if (res.ok) {
@@ -18,6 +21,8 @@ export default function History() {
             }
         } catch (error) {
             console.error("이력 로딩 실패", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -44,9 +49,14 @@ export default function History() {
     return (
         <div className="page-container">
             <h2 className="page-title">만남 이력</h2>
-
             <div className="history-list">
-                {historyList.length === 0 ? (
+                {isLoading ? (
+                        /* 로딩 중일 때 표시 */
+                        <div className="inline-loading-container">
+                            <div className="spinner"></div>
+                            <div className="loading-text">조 편성 기록을 가져오는 중 입니다.</div>
+                        </div>
+                ) : historyList.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '60px', color: '#888', backgroundColor: '#fafafa', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
                         저장된 모임 이력이 없습니다.
                     </div>

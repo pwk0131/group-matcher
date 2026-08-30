@@ -84,7 +84,7 @@ function App() {
                     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '15px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '30px' }}>Bookend</span>
                         <NavLink to="/members" style={navLinkStyle}>부원 관리</NavLink>
-                        <NavLink to="/history" style={navLinkStyle}>역대 조 편성</NavLink>
+                        <NavLink to="/history" style={navLinkStyle}>조 편성 기록</NavLink>
                         <NavLink to="/formation" style={navLinkStyle}>새 조 편성</NavLink>
                         <div style={{ marginLeft: 'auto' }}>
                             <button onClick={handleLogout} className="btn-outline" style={{ padding: '6px 12px' }}>로그아웃</button>

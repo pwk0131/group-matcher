@@ -5,6 +5,8 @@ export default function Members() {
     const [members, setMembers] = useState([]);
     const [newName, setNewName] = useState('');
     const [newRole, setNewRole] = useState('NEW');
+    const [isLoading, setIsLoading] = useState(true);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -12,6 +14,7 @@ export default function Members() {
     }, []);
 
     const fetchMembers = async () => {
+        setIsLoading(true);
         try {
             const response = await fetch(`${API_BASE_URL}/api/members`, { credentials: 'include' });
             if (response.ok) {
@@ -20,6 +23,8 @@ export default function Members() {
             }
         } catch (error) {
             console.error("데이터를 불러오지 못했습니다.", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -118,7 +123,22 @@ export default function Members() {
                 </tr>
                 </thead>
                 <tbody>
-                {members.map(member => (
+                {isLoading ? (
+                    /* 로딩 중일 때: 테이블 열(6개)을 합쳐서 가운데에 로딩 표시 */
+                    <tr>
+                        <td colSpan="6" style={{ borderBottom: 'none' }}>
+                            <div className="inline-loading-container">
+                                <div className="spinner small"></div>
+                                <div className="loading-text" style={{ fontSize: '15px' }}>DB 정보를 불러오는 중입니다...</div>
+                            </div>
+                        </td>
+                    </tr>
+                ) : members.length === 0 ? (
+                    <tr>
+                        <td colSpan="6" style={{ color: '#888', padding: '30px' }}>등록된 회원이 없습니다.</td>
+                    </tr>
+                ) : (
+                members.map(member => (
                     <tr
                         key={member.memberId}
                         className={member.roleType === 'NEW' ? 'new-member' : ''}
@@ -167,7 +187,7 @@ export default function Members() {
                             </button>
                         </td>
                     </tr>
-                ))}
+                )))}
                 </tbody>
             </table>
         </div>

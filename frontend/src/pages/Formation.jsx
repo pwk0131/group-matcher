@@ -12,14 +12,20 @@ export default function Formation() {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetchingData, setIsFetchingData] = useState(true);
 
     const navigate = useNavigate();
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
-        fetchActiveMembers();
-        fetchLatestHistory();
+        // 두 개의 API 호출을 동시에 기다립니다.
+        const loadInitialData = async () => {
+            setIsFetchingData(true);
+            await Promise.all([fetchActiveMembers(), fetchLatestHistory()]);
+            setIsFetchingData(false);
+        };
+        loadInitialData();
     }, []);
 
     const fetchActiveMembers = async () => {
@@ -173,7 +179,18 @@ export default function Formation() {
             </div>
 
             <div className="member-grid">
-                {filteredMembers.map(member => {
+                {isFetchingData ? (
+                    /* 로딩 중일 때 그리드 전체를 차지하도록 gridColumn 설정 */
+                    <div style={{ gridColumn: '1 / -1' }}>
+                        <div className="inline-loading-container" style={{ padding: '30px 0' }}>
+                            <div className="spinner small"></div>
+                            <div className="loading-text" style={{ fontSize: '15px' }}>동아리 부원을 불러오는 중입니다...</div>
+                        </div>
+                    </div>
+                ) : filteredMembers.length === 0 ? (
+                    <div style={{ color: '#888', marginTop: '10px', gridColumn: '1 / -1' }}>검색 결과가 없습니다.</div>
+                ) : (
+                filteredMembers.map(member => {
                     const isSelected = attendeeIds.has(member.memberId);
                     return (
                         <div
@@ -185,7 +202,7 @@ export default function Formation() {
                             <span>{member.name}</span>
                         </div>
                     );
-                })}
+                }))}
                 {filteredMembers.length === 0 && <div style={{ color: '#888', marginTop: '10px' }}>검색 결과가 없습니다.</div>}
             </div>
 
