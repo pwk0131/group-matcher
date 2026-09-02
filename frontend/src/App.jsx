@@ -6,7 +6,9 @@ import Formation from './pages/Formation';
 import Result from './pages/Result';
 import History from './pages/History';
 import Footer from './components/Footer';
+import SettingsModal from './components/SettingsModal';
 import './index.css';
+
 
 const ProtectedRoute = ({ children, isAuthenticated }) => {
     const location = useLocation();
@@ -31,6 +33,8 @@ function App() {
     const [isChecking, setIsChecking] = useState(true);
 
     const [progress, setProgress] = useState(0);
+
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -134,28 +138,55 @@ function App() {
                         gap: '10px',
                         alignItems: 'center'
                     }}>
-                        <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '30px' }}>Bookend</span>
+                        <span style={{fontSize: '20px', fontWeight: 'bold', marginRight: '30px'}}>Bookend</span>
                         <NavLink to="/members" style={navLinkStyle}>회원 관리</NavLink>
                         <NavLink to="/history" style={navLinkStyle}>조 편성 기록</NavLink>
                         <NavLink to="/formation" style={navLinkStyle}>새 조 편성</NavLink>
-                        <div style={{ marginLeft: 'auto' }}>
-                            <button onClick={handleLogout} className="btn-outline" style={{ padding: '6px 12px' }}>로그아웃</button>
+
+
+                        <div style={{marginLeft: 'auto', display: 'flex', gap: '10px', alignItems: 'center'}}>
+                            <button
+                                className="settings-btn"
+                                onClick={() => setIsSettingsOpen(true)}
+                                title="설정"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                                     strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </button>
+                            <button onClick={handleLogout} className="btn-outline" style={{padding: '6px 12px'}}>로그아웃
+                            </button>
                         </div>
                     </div>
                 </header>
             )}
 
-            <main style={{ flexGrow: 1}}>
+            <main style={{flexGrow: 1}}>
                 <Routes>
                     <Route path="/" element={
-                        isAuthenticated ? <Navigate to="/members" replace /> : <Login onLoginSuccess={() => setIsAuthenticated(true)} />
-                    } />
-                    <Route path="/members" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Members /></ProtectedRoute>} />
-                    <Route path="/formation" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Formation /></ProtectedRoute>} />
-                    <Route path="/result" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Result /></ProtectedRoute>} />
-                    <Route path="/history" element={<ProtectedRoute isAuthenticated={isAuthenticated}><History /></ProtectedRoute>} />
+                        isAuthenticated ? <Navigate to="/members" replace/> :
+                            <Login onLoginSuccess={() => setIsAuthenticated(true)}/>
+                    }/>
+                    <Route path="/members"
+                           element={<ProtectedRoute isAuthenticated={isAuthenticated}><Members/></ProtectedRoute>}/>
+                    <Route path="/formation"
+                           element={<ProtectedRoute isAuthenticated={isAuthenticated}><Formation/></ProtectedRoute>}/>
+                    <Route path="/result"
+                           element={<ProtectedRoute isAuthenticated={isAuthenticated}><Result/></ProtectedRoute>}/>
+                    <Route path="/history"
+                           element={<ProtectedRoute isAuthenticated={isAuthenticated}><History/></ProtectedRoute>}/>
                 </Routes>
             </main>
+            {isSettingsOpen && (
+                <SettingsModal
+                    onClose={() => setIsSettingsOpen(false)}
+                    onLogout={() => setIsAuthenticated(false)}
+                />
+            )}
 
             <Footer />
         </BrowserRouter>

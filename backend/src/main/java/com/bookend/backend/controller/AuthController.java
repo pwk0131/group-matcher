@@ -15,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.bookend.backend.dto.AdminUpdateRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -75,5 +78,31 @@ public class AuthController {
 
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 		return ResponseEntity.ok(Map.of("message", "로그아웃 성공"));
+	}
+
+	@PostMapping("/update")
+	@Transactional
+	public ResponseEntity<?> updateAdmin(@RequestBody AdminUpdateRequest request, HttpServletResponse response) {
+		String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+		Admin admin = adminRepository.findById(currentUsername).orElse(null);
+
+		if (admin == null || !passwordEncoder.matches(request.currentPassword(), admin.getPassword())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("현재 비밀번호가 일치하지 않습니다.");
+		}
+
+		String encodedNewPassword = passwordEncoder.encode(request.newPassword());
+		adminRepository.updateAdminInfo(currentUsername, request.newUsername(), encodedNewPassword);
+
+		ResponseCookie cookie = ResponseCookie.from("adminToken", "")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("None")
+			.path("/")
+			.maxAge(0)
+			.build();
+
+		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+		return ResponseEntity.ok(Map.of("message", "정보가 성공적으로 변경되었습니다. 다시 로그인해주세요."));
 	}
 }
