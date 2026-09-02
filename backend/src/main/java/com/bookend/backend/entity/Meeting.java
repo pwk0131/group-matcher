@@ -22,5 +22,5 @@ public class Meeting {
 	private LocalDate meetingDate;
 
 	@Column(nullable = false)
-	private int roundNumber; // 기수 내 모임 회차 (예: 1, 2, 3...)
+	private int roundNumber;
 }

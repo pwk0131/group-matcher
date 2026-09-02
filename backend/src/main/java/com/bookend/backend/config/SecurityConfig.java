@@ -43,8 +43,8 @@ public class SecurityConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowedOrigins(List.of(
-			"http://localhost:5173", // 로컬 개발용
-			"https://bookend-frontend-rouge.vercel.app"
+			"http://localhost:5173",
+			"https://bookend-weaver.vercel.app/"
 		));
 
 		config.addAllowedMethod("*");

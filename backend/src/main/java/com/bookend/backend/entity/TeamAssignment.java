@@ -16,7 +16,7 @@ public class TeamAssignment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long assignmentId;
 
-	// 외래 키(FK) 설정 - 다대일(N:1) 관계
+	// 외래 키 설정 - 다대일(N:1) 관계
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "meeting_id", nullable = false)
 	private Meeting meeting;
@@ -26,5 +26,5 @@ public class TeamAssignment {
 	private Member member;
 
 	@Column(nullable = false, length = 50)
-	private String teamName; // 예: "1조"
+	private String teamName;
 }
