@@ -92,9 +92,9 @@ export default function Members() {
     return (
         <div className="page-container">
             <div className="members-top-bar">
-                <h2 className="page-title" style={{ margin: 0, border: 'none' }}>대시보드</h2>
+                <h2 className="page-title" style={{margin: 0, border: 'none'}}>대시보드</h2>
                 {/* isInactive가 false인 사람만 활동 중인 것으로 카운트 */}
-                <span style={{ fontSize: '15px', color: '#666' }}>활동 중: <b>{members.filter(m => !m.isInactive).length}</b>명</span>
+                <span style={{fontSize: '15px', color: '#666'}}>활동 중: <b>{members.filter(m => !m.isInactive).length}</b>명</span>
             </div>
 
             <form className="add-member-area" onSubmit={handleAddMember}>
@@ -103,7 +103,7 @@ export default function Members() {
                     placeholder="새로운 부원 이름..."
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    style={{ flex: 1 }}
+                    style={{flex: 1}}
                 />
                 <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
                     <option value="NEW">신입 (NEW)</option>
@@ -112,85 +112,96 @@ export default function Members() {
                 <button type="submit" className="btn-primary">추가하기</button>
             </form>
 
-            <table className="members-table">
-                <thead>
-                <tr>
-                    <th>이름</th>
-                    <th>구분</th>
-                    <th>출석 횟수</th>
-                    <th>진행자 여부</th>
-                    <th>비활동 여부</th>
-                    <th>관리</th>
-                </tr>
-                </thead>
-                <tbody>
-                {isLoading ? (
-                    /* 로딩 중일 때: 테이블 열(6개)을 합쳐서 가운데에 로딩 표시 */
+            <div className="table-wrapper">
+                <table className="members-table">
+                    <thead>
                     <tr>
-                        <td colSpan="6" style={{ borderBottom: 'none' }}>
-                            <div className="inline-loading-container">
-                                <div className="spinner small"></div>
-                                <div className="loading-text" style={{ fontSize: '15px' }}>DB 정보를 불러오는 중입니다...</div>
-                            </div>
-                        </td>
+                        <th>이름</th>
+                        <th>구분</th>
+                        <th>출석 횟수</th>
+                        <th>진행자 여부</th>
+                        <th>비활동 여부</th>
+                        <th>관리</th>
                     </tr>
-                ) : members.length === 0 ? (
-                    <tr>
-                        <td colSpan="6" style={{ color: '#888', padding: '30px' }}>등록된 회원이 없습니다.</td>
-                    </tr>
-                ) : (
-                members.map(member => (
-                    <tr
-                        key={member.memberId}
-                        className={member.roleType === 'NEW' ? 'new-member' : ''}
-                        style={{ opacity: member.isInactive ? 0.4 : 1 }}
-                    >
-                        <td style={{ fontWeight: 'bold' }}>{member.name}</td>
-
-                        <td>
-                            <select
-                                value={member.roleType}
-                                onChange={(e) => handleUpdate(member.memberId, 'roleType', e.target.value)}
-                                style={{ padding: '4px', border: '1px solid var(--color-border)', borderRadius: '4px' }}
+                    </thead>
+                    <tbody>
+                    {isLoading ? (
+                        /* 로딩 중일 때: 테이블 열(6개)을 합쳐서 가운데에 로딩 표시 */
+                        <tr>
+                            <td colSpan="6" style={{borderBottom: 'none'}}>
+                                <div className="inline-loading-container">
+                                    <div className="spinner small"></div>
+                                    <div className="loading-text" style={{fontSize: '15px'}}>DB 정보를 불러오는 중입니다...</div>
+                                </div>
+                            </td>
+                        </tr>
+                    ) : members.length === 0 ? (
+                        <tr>
+                            <td colSpan="6" style={{color: '#888', padding: '30px'}}>등록된 회원이 없습니다.</td>
+                        </tr>
+                    ) : (
+                        members.map(member => (
+                            <tr
+                                key={member.memberId}
+                                className={member.roleType === 'NEW' ? 'new-member' : ''}
+                                style={{opacity: member.isInactive ? 0.4 : 1}}
                             >
-                                <option value="NEW">신입</option>
-                                <option value="EXISTING">기존</option>
-                            </select>
-                        </td>
+                                <td style={{fontWeight: 'bold'}}>{member.name}</td>
 
-                        <td>
-                            <div className="attendance-control">
-                                <button onClick={() => handleUpdate(member.memberId, 'attendanceCount', Math.max(0, member.attendanceCount - 1))}>-</button>
-                                <span style={{ width: '20px' }}>{member.attendanceCount}</span>
-                                <button onClick={() => handleUpdate(member.memberId, 'attendanceCount', member.attendanceCount + 1)}>+</button>
-                            </div>
-                        </td>
+                                <td>
+                                    <select
+                                        value={member.roleType}
+                                        onChange={(e) => handleUpdate(member.memberId, 'roleType', e.target.value)}
+                                        style={{
+                                            padding: '4px',
+                                            border: '1px solid var(--color-border)',
+                                            borderRadius: '4px'
+                                        }}
+                                    >
+                                        <option value="NEW">신입</option>
+                                        <option value="EXISTING">기존</option>
+                                    </select>
+                                </td>
 
-                        <td>
-                            <input
-                                type="checkbox"
-                                checked={member.isFacilitator}
-                                onChange={(e) => handleUpdate(member.memberId, 'isFacilitator', e.target.checked)}
-                            />
-                        </td>
+                                <td>
+                                    <div className="attendance-control">
+                                        <button
+                                            onClick={() => handleUpdate(member.memberId, 'attendanceCount', Math.max(0, member.attendanceCount - 1))}>-
+                                        </button>
+                                        <span style={{width: '20px'}}>{member.attendanceCount}</span>
+                                        <button
+                                            onClick={() => handleUpdate(member.memberId, 'attendanceCount', member.attendanceCount + 1)}>+
+                                        </button>
+                                    </div>
+                                </td>
 
-                        <td>
-                            <input
-                                type="checkbox"
-                                checked={member.isInactive}
-                                onChange={(e) => handleUpdate(member.memberId, 'isInactive', e.target.checked)}
-                            />
-                        </td>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={member.isFacilitator}
+                                        onChange={(e) => handleUpdate(member.memberId, 'isFacilitator', e.target.checked)}
+                                    />
+                                </td>
 
-                        <td>
-                            <button className="btn-outline" onClick={() => handleDelete(member.memberId, member.name)}>
-                                삭제
-                            </button>
-                        </td>
-                    </tr>
-                )))}
-                </tbody>
-            </table>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={member.isInactive}
+                                        onChange={(e) => handleUpdate(member.memberId, 'isInactive', e.target.checked)}
+                                    />
+                                </td>
+
+                                <td>
+                                    <button className="btn-outline"
+                                            onClick={() => handleDelete(member.memberId, member.name)}>
+                                        삭제
+                                    </button>
+                                </td>
+                            </tr>
+                        )))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

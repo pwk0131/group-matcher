@@ -27,7 +27,6 @@
     text-align: center;
 }
 
-/* 표 헤더에만 연한 포인트 컬러 적용 */
 .members-table th {
     background-color: var(--color-accent-light);
     color: var(--color-accent-dark);
@@ -74,4 +73,83 @@ input[type="checkbox"] {
 .attendance-control button:hover {
     border-color: var(--color-accent-dark);
     color: var(--color-accent-dark);
+}
+
+.table-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    overflow: hidden; /* 둥근 모서리 밖으로 삐져나가는 것 방지 */
+    margin-top: 10px;
+}
+
+.members-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.members-table th {
+    background-color: #f8f9fa;
+    color: #888;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 16px 10px;
+    border-bottom: 1px solid var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.members-table td {
+    padding: 18px 10px;
+    border-bottom: 1px solid #f2f2f2;
+    color: #444;
+    font-size: 14.5px;
+    background-color: #ffffff;
+    transition: background-color 0.2s;
+    vertical-align: middle;
+}
+
+.members-table tr:last-child td {
+    border-bottom: none;
+}
+
+.members-table tr:hover td {
+    background-color: #fafbfc;
+}
+
+.members-table tr.new-member td:first-child {
+    position: relative;
+}
+.members-table tr.new-member td:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #ff8fa3;
+}
+
+.members-table tr.new-member select {
+    color: #d32f2f;
+    font-weight: bold;
+    background-color: #fff0f0;
+    border-color: #ffcdd2;
+}
+
+.members-table select {
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: #fbfbfb;
+    font-size: 13.5px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.members-table select:hover {
+    border-color: var(--color-accent-dark);
 }
