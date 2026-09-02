@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './Footer.css';
+import './styles/Footer.css';
 
 export default function Footer() {
     // About 모달 창 표시 여부를 관리하는 상태

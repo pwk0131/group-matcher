@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './Result.css';
+import './styles/Result.css';
 
 export default function Result() {
     const location = useLocation();
@@ -19,6 +19,9 @@ export default function Result() {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const [benchMembers, setBenchMembers] = useState([]);
+    const [activeMoveMember, setActiveMoveMember] = useState(null);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -35,6 +38,54 @@ export default function Result() {
         setLogs(location.state.logs || []);
         fetchHistoryAndInitialize(location.state.teams, location.state.currentRound);
     }, [location, navigate]);
+
+    const handleDragStart = (e, member, fromLocation) => {
+        setDragInfo({ member, fromLocation });
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleModalMove = (toLocation) => {
+        if (activeMoveMember) {
+            moveMember(activeMoveMember.member, activeMoveMember.fromLocation, toLocation);
+            setActiveMoveMember(null); // 이동 후 모달 닫기
+        }
+    };
+
+    const moveMember = (member, fromLocation, toLocation) => {
+        if (fromLocation === toLocation) return;
+
+        const newTeams = [...teams];
+        let newBench = [...benchMembers];
+
+        if (fromLocation === 'bench') {
+            newBench = newBench.filter(m => m.memberId !== member.memberId);
+        } else {
+            newTeams[fromLocation].members = newTeams[fromLocation].members.filter(m => m.memberId !== member.memberId);
+        }
+
+        if (toLocation === 'bench') {
+            newBench.push(member);
+        } else {
+            newTeams[toLocation].members.push(member);
+        }
+
+        if (fromLocation !== 'bench') {
+            const fromConflicts = getTeamConflicts(newTeams[fromLocation].members, currentRound, historyMatrix);
+            newTeams[fromLocation].penalty = fromConflicts.penalty;
+            newTeams[fromLocation].conflicts = fromConflicts.conflicts;
+        }
+        if (toLocation !== 'bench') {
+            const toConflicts = getTeamConflicts(newTeams[toLocation].members, currentRound, historyMatrix);
+            newTeams[toLocation].penalty = toConflicts.penalty;
+            newTeams[toLocation].conflicts = toConflicts.conflicts;
+        }
+
+        setTeams(newTeams);
+        setBenchMembers(newBench);
+    };
 
     const fetchHistoryAndInitialize = async (initialTeams, round) => {
         setIsLoading(true);
@@ -93,7 +144,7 @@ export default function Result() {
                         penalty += Math.pow(10, 4 - delta);
                         const timeAgo = delta === 1 ? '직전 모임' : `${delta}회 전`;
                         const roundText = lastRound === 0 ? 'OT' : `${lastRound}회차`;
-                        conflicts.push(`🚨 ${m1} ↔ ${m2} (${roundText} 같은 조)`);
+                        conflicts.push(`${m1} ↔ ${m2} (${roundText} 같은 조)`);
                     }
                 }
             }
@@ -101,38 +152,21 @@ export default function Result() {
         return { penalty, conflicts };
     };
 
-    const handleDragStart = (e, member, teamIndex) => {
-        setDragInfo({ member, fromTeamIndex: teamIndex });
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
-
-    const handleDrop = (e, toTeamIndex) => {
+    const handleDrop = (e, toLocation) => {
         e.preventDefault();
         if (!dragInfo) return;
-
-        const { member, fromTeamIndex } = dragInfo;
-        if (fromTeamIndex === toTeamIndex) return;
-
-        const newTeams = [...teams];
-        newTeams[fromTeamIndex].members = newTeams[fromTeamIndex].members.filter(m => m.memberId !== member.memberId);
-        newTeams[toTeamIndex].members.push(member);
-
-        const fromConflicts = getTeamConflicts(newTeams[fromTeamIndex].members, currentRound, historyMatrix);
-        newTeams[fromTeamIndex].penalty = fromConflicts.penalty;
-        newTeams[fromTeamIndex].conflicts = fromConflicts.conflicts;
-
-        const toConflicts = getTeamConflicts(newTeams[toTeamIndex].members, currentRound, historyMatrix);
-        newTeams[toTeamIndex].penalty = toConflicts.penalty;
-        newTeams[toTeamIndex].conflicts = toConflicts.conflicts;
-
-        setTeams(newTeams);
+        const { member, fromLocation } = dragInfo;
+        moveMember(member, fromLocation, toLocation);
         setDragInfo(null);
     };
 
     const handleSave = async () => {
+
+        if (benchMembers.length > 0) {
+            alert("대기소에 남아있는 인원이 있습니다. 모두 조에 배정해주세요.");
+            return;
+        }
+
         const totalPenalty = teams.reduce((sum, t) => sum + t.penalty, 0);
         const roundText = String(currentRound) === "0" ? "OT(0회차)" : `제 ${currentRound}회차`;
 
@@ -195,12 +229,13 @@ export default function Result() {
 
     return (
         <div className="page-container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 className="page-title" style={{ margin: 0, border: 'none' }}>
-                    {String(currentRound) === "0" ? "OT (0회차)" : `제 ${currentRound}회차`} 조 편성 결과 <span style={{fontSize: '18px', color: '#888'}}>({meetingDate})</span>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+                <h2 className="page-title" style={{margin: 0, border: 'none'}}>
+                    {String(currentRound) === "0" ? "OT (0회차)" : `제 ${currentRound}회차`} 조 편성 결과 <span
+                    style={{fontSize: '18px', color: '#888'}}>({meetingDate})</span>
                 </h2>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{display: 'flex', gap: '10px'}}>
                     <button className="btn-outline" onClick={() => navigate('/formation')}>다시 편성하기</button>
                     <button className="btn-primary" onClick={handleSave}>DB에 최종 확정 저장</button>
                 </div>
@@ -215,12 +250,18 @@ export default function Result() {
                         {historyList.map(hist => (
                             <div key={hist.meetingId} className="history-quickview-card">
                                 <div className="history-quickview-card-title">
-                                    {String(hist.roundNumber) === "0" ? "OT (0회차)" : `제 ${hist.roundNumber}회차`} <span style={{color:'#888', fontWeight:'normal'}}>({hist.meetingDate})</span>
+                                    {String(hist.roundNumber) === "0" ? "OT (0회차)" : `제 ${hist.roundNumber}회차`} <span
+                                    style={{color: '#888', fontWeight: 'normal'}}>({hist.meetingDate})</span>
                                 </div>
                                 {Object.entries(hist.teams).map(([tName, members]) => (
                                     <div key={tName} className="history-quickview-team">
-                                        <span style={{ color: 'var(--color-accent-dark)', fontWeight: 'bold', display: 'inline-block', width: '30px' }}>{tName}</span>
-                                        <span style={{ color: '#555'}}>{members.join(', ')}</span>
+                                        <span style={{
+                                            color: 'var(--color-accent-dark)',
+                                            fontWeight: 'bold',
+                                            display: 'inline-block',
+                                            width: '30px'
+                                        }}>{tName}</span>
+                                        <span style={{color: '#555'}}>{members.join(', ')}</span>
                                     </div>
                                 ))}
                             </div>
@@ -229,21 +270,57 @@ export default function Result() {
                 </div>
             )}
 
-            <div style={{ marginBottom: '15px' }}>
+            <div style={{marginBottom: '15px'}}>
                 <button
                     className="btn-outline"
                     onClick={() => setIsLogOpen(!isLogOpen)}
-                    style={{ fontSize: '13px', padding: '6px 12px' }}
+                    style={{fontSize: '13px', padding: '6px 12px'}}
                 >
                     {isLogOpen ? " ▶ 상세 로그 숨기기" : "▶ 상세 로그 보기"}
                 </button>
+            </div>
+
+            <div className="bench-container" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'bench')}>
+                <div className="bench-header">
+                    <span>임시 박스</span>
+                    <span style={{fontSize: '13px', color: '#888', fontWeight: 'normal'}}>
+                        {benchMembers.length > 0 ? `${benchMembers.length}명 대기 중` : '이동할 조원을 여기에 끌어다 놓으세요.'}
+                    </span>
+                </div>
+                <div className="bench-list">
+                    {benchMembers.map(member => (
+                        <div key={member.memberId}
+                             className={`member-item ${member.roleType === 'NEW' ? 'new-member-card' : ''}`} draggable
+                             onDragStart={(e) => handleDragStart(e, member, 'bench')}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                    <span style={{fontWeight: 'bold'}}>{member.name}</span>
+                                </div>
+                                <button
+                                    className="move-trigger-btn"
+                                    onClick={() => setActiveMoveMember({member, fromLocation: 'bench'})}
+                                    title="팀 이동"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <path d="M17 3l4 4-4 4"></path>
+                                        <path d="M3 7h18"></path>
+                                        <path d="M7 21l-4-4 4-4"></path>
+                                        <path d="M21 17H3"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {isLogOpen && logs.length > 0 && (
                 <div className="log-console-container">
                     <div className="log-console-header">
                         <span>Terminal - Team Formation Algorithm</span>
-                        <span style={{ fontSize: '12px', color: '#888' }}>Running... Done!</span>
+                        <span style={{fontSize: '12px', color: '#888'}}>Running... Done!</span>
                     </div>
                     <div className="log-console-body">
                         {logs.map((logLine, idx) => (
@@ -255,15 +332,20 @@ export default function Result() {
 
             <div className="result-board">
                 {teams.map((team, teamIndex) => (
-                    <div key={team.teamName || teamIndex} className="team-column" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, teamIndex)}>
+                    <div key={team.teamName || teamIndex} className="team-column" onDragOver={handleDragOver}
+                         onDrop={(e) => handleDrop(e, teamIndex)}>
                         <div className="team-header">
                             <span>{team.teamName}</span>
-                            <span style={{ fontSize: '14px', color: '#888', fontWeight: 'normal' }}>{team.members.length}명</span>
+                            <span style={{
+                                fontSize: '14px',
+                                color: '#888',
+                                fontWeight: 'normal'
+                            }}>{team.members.length}명</span>
                         </div>
 
                         {team.conflicts && team.conflicts.length > 0 && (
                             <div className="team-penalty-box">
-                                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>⚠️ 겹치는 이력 발견!</div>
+                                <div style={{fontWeight: 'bold', marginBottom: '5px'}}>⚠️ 겹치는 이력 발견!</div>
                                 {team.conflicts.map((conflictMsg, idx) => (
                                     <div key={idx} className="penalty-item">{conflictMsg}</div>
                                 ))}
@@ -272,13 +354,33 @@ export default function Result() {
 
                         <div className="member-list">
                             {team.members.map(member => (
-                                <div key={member.memberId} className={`member-item ${member.roleType === 'NEW' ? 'new-member-card' : ''}`} draggable onDragStart={(e) => handleDragStart(e, member, teamIndex)}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ fontWeight: 'bold' }}>{member.name}</span>
+                                <div key={member.memberId}
+                                     className={`member-item ${member.roleType === 'NEW' ? 'new-member-card' : ''}`}
+                                     draggable onDragStart={(e) => handleDragStart(e, member, teamIndex)}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                        <div style={{display: 'flex', alignItems: 'center'}}>
+                                            <span style={{fontWeight: 'bold'}}>{member.name}</span>
                                             {member.isFacilitator && <span className="facilitator-badge">진행자</span>}
                                         </div>
-                                        <span style={{ fontSize: '12px', color: '#888' }}>{member.roleType === 'NEW' ? '신입' : '기존'}</span>
+
+                                        <button
+                                            className="move-trigger-btn"
+                                            onClick={() => setActiveMoveMember({member, fromLocation: teamIndex})}
+                                            title="팀 이동"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                                                 strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M17 3l4 4-4 4"></path>
+                                                <path d="M3 7h18"></path>
+                                                <path d="M7 21l-4-4 4-4"></path>
+                                                <path d="M21 17H3"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -286,6 +388,40 @@ export default function Result() {
                     </div>
                 ))}
             </div>
+            {activeMoveMember && (
+                <div className="about-modal-overlay" onClick={() => setActiveMoveMember(null)}>
+                    <div className="about-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '350px', padding: '25px' }}>
+                        <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--color-accent-dark)', textAlign: 'center' }}>
+                            어디로 이동할까요?
+                            <div style={{ fontSize: '14px', color: '#666', fontWeight: 'normal', marginTop: '6px' }}>
+                                <b>{activeMoveMember.member.name}</b> 님의 새 조를 선택해주세요.
+                            </div>
+                        </h3>
+
+                        <div className="move-options-grid">
+                            <button
+                                className={`move-option-btn ${activeMoveMember.fromLocation === 'bench' ? 'current' : ''}`}
+                                onClick={() => handleModalMove('bench')}
+                                disabled={activeMoveMember.fromLocation === 'bench'}
+                            >
+                                보류
+                            </button>
+
+                            {teams.map((t, idx) => (
+                                <button
+                                    key={idx}
+                                    className={`move-option-btn ${activeMoveMember.fromLocation === idx ? 'current' : ''}`}
+                                    onClick={() => handleModalMove(idx)}
+                                    disabled={activeMoveMember.fromLocation === idx}
+                                >
+                                    {t.teamName}
+                                </button>
+                            ))}
+                        </div>
+                        <button className="btn-outline" style={{ width: '100%', marginTop: '15px' }} onClick={() => setActiveMoveMember(null)}>취소</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

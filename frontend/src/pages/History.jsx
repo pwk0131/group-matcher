@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './History.css';
+import './styles/History.css';
 
 export default function History() {
     const [historyList, setHistoryList] = useState([]);

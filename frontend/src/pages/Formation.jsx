@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Formation.css';
+import './styles/Formation.css';
 
 export default function Formation() {
     const [members, setMembers] = useState([]);

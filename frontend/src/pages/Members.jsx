@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './Members.css';
+import './styles/Members.css';
 
 export default function Members() {
     const [members, setMembers] = useState([]);
