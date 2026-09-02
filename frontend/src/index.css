@@ -1,6 +1,4 @@
-/* frontend/src/index.css */
-
-/* 1. 글로벌 색상 변수 선언 */
+/* 글로벌 색상 변수 선언 */
 :root {
   --color-bg: #ffffff;         /* 기본 하얀 배경 */
   --color-text: #260300;       /* 진한 텍스트 (다크 브라운) */
@@ -9,7 +7,7 @@
   --color-border: #eaeaea;     /* 아주 연한 회색 테두리 */
 }
 
-/* 2. 기본 초기화 및 폰트 설정 */
+/* 기본 초기화 및 폰트 설정 */
 body {
   margin: 0;
   padding: 0;
@@ -19,14 +17,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 3. 공통 레이아웃 (모든 페이지는 이 컨테이너 안에 들어갑니다) */
+/* 공통 레이아웃 */
 .page-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
-/* 4. 공통 타이틀 */
+/* 공통 타이틀 */
 .page-title {
   font-size: 28px;
   font-weight: 700;
@@ -35,7 +33,7 @@ body {
   border-bottom: 2px solid var(--color-border);
 }
 
-/* 5. 공통 버튼 디자인 (포인트 색상 적용) */
+/* 공통 버튼 디자인 */
 .btn-primary {
   background-color: var(--color-accent-dark);
   color: #ffffff;
@@ -81,7 +79,7 @@ body {
   background-color: #fafafa;
 }
 
-/* 6. 공통 입력창 디자인 */
+/* 공통 입력창 디자인 */
 input[type="text"], input[type="password"], select {
   padding: 10px 12px;
   border: 1px solid var(--color-border);
@@ -94,7 +92,7 @@ input:focus, select:focus {
   border-color: var(--color-accent-dark);
 }
 
-/* --- 로딩 애니메이션 --- */
+/* 로딩 애니메이션 */
 .global-loading-container {
   display: flex;
   flex-direction: column;
@@ -133,7 +131,7 @@ input:focus, select:focus {
   line-height: 1.5;
 }
 
-/* --- 영역 내부용 로딩 컨테이너 --- */
+/* 영역 내부용 로딩 컨테이너 */
 .inline-loading-container {
   display: flex;
   flex-direction: column;
@@ -235,4 +233,95 @@ input:focus, select:focus {
   color: var(--color-accent-dark);
   background-color: var(--color-accent-light);
   transform: rotate(45deg);
+}
+
+/* 로그인 페이지 전용 스타일 */
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh; /* 화면 중앙에 위치하도록 높이 확보 */
+  animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.login-card {
+  background: #ffffff;
+  padding: 50px 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 12px 40px rgba(38, 3, 0, 0.06);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.login-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-accent-dark);
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  font-size: 14.5px;
+  color: #666;
+  margin-bottom: 35px;
+  word-break: keep-all;
+  line-height: 1.5;
+}
+
+.login-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.login-input-group input {
+  padding: 15px 16px;
+  font-size: 15px;
+  background-color: #fbfbfb;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.login-input-group input:focus {
+  background-color: #ffffff;
+  border-color: var(--color-accent-dark);
+  box-shadow: 0 0 0 4px var(--color-accent-light);
+  outline: none;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 버튼 내부용 미니 스피너 */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* 버튼이 로딩/비활성화 상태일 때의 스타일 */
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

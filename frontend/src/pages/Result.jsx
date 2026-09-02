@@ -22,6 +22,8 @@ export default function Result() {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
+        document.title = "Bookend Weaver/result";
+
         if (!location.state || !location.state.teams) {
             alert("조 편성 데이터가 없습니다. 세팅 화면으로 이동합니다.");
             navigate('/formation');

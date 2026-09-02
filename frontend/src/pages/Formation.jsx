@@ -19,7 +19,8 @@ export default function Formation() {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
-        // 두 개의 API 호출을 동시에 기다립니다.
+        document.title = "Bookend Weaver/formation";
+
         const loadInitialData = async () => {
             setIsFetchingData(true);
             await Promise.all([fetchActiveMembers(), fetchLatestHistory()]);

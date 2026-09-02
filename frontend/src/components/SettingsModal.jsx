@@ -44,26 +44,70 @@ export default function SettingsModal({ onClose, onLogout }) {
     return (
         <div className="about-modal-overlay" onClick={onClose}>
             <div className="about-modal-content" onClick={(e) => e.stopPropagation()}>
-                <h3 style={{ marginTop: 0, color: 'var(--color-accent-dark)' }}>설정</h3>
+                <h3 style={{marginTop: 0, color: 'var(--color-accent-dark)'}}>설정</h3>
 
-                <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ fontSize: '12px', color: '#666' }}>본인 확인</div>
-                    <input type="password" placeholder="현재 비밀번호" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+                <form onSubmit={handleUpdate} style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                    <div style={{fontSize: '12px', color: '#666'}}>본인 확인</div>
+                    <input type="password" placeholder="현재 비밀번호" value={currentPassword}
+                           onChange={(e) => setCurrentPassword(e.target.value)} required/>
 
-                    <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '10px 0' }} />
+                    <hr style={{border: 'none', borderTop: '1px solid var(--color-border)', margin: '10px 0'}}/>
 
-                    <div style={{ fontSize: '12px', color: '#666' }}>변경할 정보</div>
-                    <input type="text" placeholder="새로운 아이디" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} required />
-                    <input type="password" placeholder="새로운 비밀번호" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                    <input type="password" placeholder="새로운 비밀번호 확인" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                    <div style={{fontSize: '12px', color: '#666'}}>변경할 정보</div>
+                    <input type="text" placeholder="새로운 아이디" value={newUsername}
+                           onChange={(e) => setNewUsername(e.target.value)} required/>
+                    <input type="password" placeholder="새로운 비밀번호" value={newPassword}
+                           onChange={(e) => setNewPassword(e.target.value)} required/>
+                    <input type="password" placeholder="새로운 비밀번호 확인" value={confirmPassword}
+                           onChange={(e) => setConfirmPassword(e.target.value)} required/>
 
-                    {errorMsg && <div style={{ color: '#d32f2f', fontSize: '13px', textAlign: 'center', marginTop: '5px' }}>{errorMsg}</div>}
+                    {errorMsg && <div style={{
+                        color: '#d32f2f',
+                        fontSize: '13px',
+                        textAlign: 'center',
+                        marginTop: '5px'
+                    }}>{errorMsg}</div>}
 
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                        <button type="button" className="btn-outline" style={{ flex: 1 }} onClick={onClose}>취소</button>
-                        <button type="submit" className="btn-primary" style={{ flex: 1 }}>변경하기</button>
+                    <div style={{
+                        marginTop: '20px',
+                        padding: '15px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        border: '1px solid var(--color-border)'
+                    }}>
+                        <div style={{
+                            fontSize: '13px',
+                            fontWeight: 'bold',
+                            color: 'var(--color-accent-dark)',
+                            marginBottom: '8px'
+                        }}>
+                            💡 정보 변경 전 꼭 읽어주세요!
+                        </div>
+                        <ul style={{
+                            margin: 0,
+                            paddingLeft: '18px',
+                            fontSize: '12.5px',
+                            color: '#666',
+                            lineHeight: '1.6',
+                            wordBreak: 'keep-all'
+                        }}>
+                            <li>비밀번호는 데이터베이스에 <b>암호화되어 저장</b>되므로, 시스템을 개발한 부원조차도 비밀번호를 조회하거나 찾아드릴 수 없습니다. 변경하신 정보는 꼭
+                                안전한 곳에 메모해 주세요.
+                            </li>
+                            <li style={{marginTop: '6px'}}>정보 변경이 중요한 공지사항은 아니지만, 원활한 북엔드 운영 및 인수인계를 위해 변경
+                                사실을 <b>다른
+                                    운영진과 공유</b>하시는 것을 권장합니다.
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div style={{display: 'flex', gap: '10px', marginTop: '15px'}}>
+                        <button type="button" className="btn-outline" style={{flex: 1}} onClick={onClose}>취소</button>
+                        <button type="submit" className="btn-primary" style={{flex: 1}}>변경하기</button>
                     </div>
                 </form>
+
             </div>
         </div>
     );

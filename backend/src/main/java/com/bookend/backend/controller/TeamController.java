@@ -19,7 +19,6 @@ public class TeamController {
 
 	private final TeamFormationService teamService;
 
-	// POST http://localhost:8080/api/teams/form
 	@PostMapping("/form")
 	public ResponseEntity<TeamFormationResponse> formTeams(@RequestBody TeamFormationRequest request) {
 		TeamFormationResponse result = teamService.generateTeams(request);
