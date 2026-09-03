@@ -6,6 +6,8 @@ import com.bookend.backend.entity.TeamAssignment;
 import com.bookend.backend.repository.EncounterHistoryRepository;
 import com.bookend.backend.repository.MeetingRepository;
 import com.bookend.backend.repository.TeamAssignmentRepository;
+import com.bookend.backend.dto.TeamSaveRequest;
+import com.bookend.backend.service.TeamFormationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class HistoryController {
 	private final MeetingRepository meetingRepository;
 	private final TeamAssignmentRepository teamAssignmentRepository;
 	private final EncounterHistoryRepository encounterHistoryRepository;
+	private final TeamFormationService teamService;
 
 	@GetMapping
 	public ResponseEntity<?> getHistory() {
@@ -67,5 +70,18 @@ public class HistoryController {
 		meetingRepository.deleteById(meetingId);
 
 		return ResponseEntity.ok().build();
+	}
+
+	@PutMapping("/{meetingId}")
+	public ResponseEntity<?> updateHistory(
+		@PathVariable Long meetingId,
+		@RequestBody TeamSaveRequest request
+	) {
+		try {
+			teamService.updateTeams(meetingId, request);
+			return ResponseEntity.ok(Map.of("message", "성공적으로 수정되었습니다."));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("수정에 실패했습니다: " + e.getMessage());
+		}
 	}
 }

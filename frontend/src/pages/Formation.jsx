@@ -99,7 +99,6 @@ export default function Formation() {
 
             if (response.ok) {
                 const resultData = await response.json();
-                // 💡 백엔드가 예전 버전을 돌려 배열을 줄 경우를 방어하는 안전장치
                 const finalTeams = Array.isArray(resultData) ? resultData : resultData.teams;
                 const finalLogs = Array.isArray(resultData) ? [] : resultData.logs;
 
@@ -235,7 +234,6 @@ export default function Formation() {
                     <div style={{ fontSize: '15px', color: '#555', textAlign: 'center', lineHeight: '1.6' }}>
                         과거 만남 기록과 패널티를 분석하여<br/>
                         적절한 조합을 찾고 있습니다<br/>
-                        <span style={{ fontSize: '13px', color: '#888' }}>(무료 서버 환경으로 최대 1분 소요될 수 있습니다)</span>
                     </div>
                 </div>
             )}

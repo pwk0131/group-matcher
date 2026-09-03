@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './styles/History.css';
 
 export default function History() {
     const [historyList, setHistoryList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -47,6 +49,36 @@ export default function History() {
         }
     };
 
+    const handleEdit = async (history) => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/members`, { credentials: 'include' });
+            const allMembers = await res.json();
+
+            const formattedTeams = Object.entries(history.teams).map(([teamName, memberNames]) => {
+                const members = memberNames.map(name => {
+                    const found = allMembers.find(m => m.name === name);
+                    return found || { memberId: `del-${name}`, name: name, roleType: 'EXISTING', isFacilitator: false };
+                });
+                return { teamName, members };
+            });
+
+            navigate('/result', {
+                state: {
+                    teams: formattedTeams,
+                    currentRound: history.roundNumber,
+                    meetingDate: history.meetingDate,
+                    meetingId: history.meetingId,
+                    isEditMode: true
+                }
+            });
+        } catch (error) {
+            alert("수정 화면으로 이동하는 중 오류가 발생했습니다.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="page-container">
             <h2 className="page-title">만남 이력</h2>
@@ -70,9 +102,15 @@ export default function History() {
                                     편성
                                     <span className="history-date">({history.meetingDate})</span>
                                 </h3>
-                                <button className="btn-outline"
-                                        onClick={() => handleDelete(history.meetingId, history.roundNumber)}>기록 삭제
-                                </button>
+                                <div style={{display: 'flex', gap: '8px'}}>
+                                    <button className="btn-outline" onClick={() => handleEdit(history)}>
+                                        수정
+                                    </button>
+                                    <button className="btn-outline"
+                                            onClick={() => handleDelete(history.meetingId, history.roundNumber)}>
+                                        삭제
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="history-teams">

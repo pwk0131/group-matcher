@@ -22,6 +22,11 @@ export default function Result() {
     const [benchMembers, setBenchMembers] = useState([]);
     const [activeMoveMember, setActiveMoveMember] = useState(null);
 
+    const [isSaving, setIsSaving] = useState(false);
+
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [meetingId, setMeetingId] = useState(null);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -36,6 +41,12 @@ export default function Result() {
         setCurrentRound(location.state.currentRound);
         setMeetingDate(location.state.meetingDate);
         setLogs(location.state.logs || []);
+
+        if (location.state.isEditMode) {
+            setIsEditMode(true);
+            setMeetingId(location.state.meetingId);
+        }
+
         fetchHistoryAndInitialize(location.state.teams, location.state.currentRound);
     }, [location, navigate]);
 
@@ -170,28 +181,40 @@ export default function Result() {
         const totalPenalty = teams.reduce((sum, t) => sum + t.penalty, 0);
         const roundText = String(currentRound) === "0" ? "OT(0회차)" : `제 ${currentRound}회차`;
 
+        const modeText = isEditMode ? "수정사항을 덮어쓰시겠습니까?" : "결과를 저장하시겠습니까?";
+
         const warningMsg = totalPenalty > 0
             ? `현재 편성에서 과거에 만난 이력이 겹치는 멤버가 있습니다. (페널티 ${totalPenalty}점)\n정말 이대로 확정하시겠습니까?`
             : `${roundText} 조 편성을 이대로 확정하시겠습니까?\n(페널티 0점의 완벽한 조합입니다!)`;
 
         if (!window.confirm(warningMsg)) return;
 
+        setIsSaving(true);
+
         try {
-            const response = await fetch(`${API_BASE_URL}/api/teams/save`, {
-                method: 'POST',
+            const apiUrl = isEditMode
+                ? `${API_BASE_URL}/api/history/${meetingId}`
+                : `${API_BASE_URL}/api/teams/save`;
+
+            const httpMethod = isEditMode ? 'PUT' : 'POST';
+
+            const response = await fetch(apiUrl, {
+                method: httpMethod,
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({ currentRound, meetingDate, teams })
             });
 
             if (response.ok) {
-                alert(`${roundText} 조 편성이 성공적으로 저장되었습니다`);
-                navigate('/members');
+                alert(`${roundText} 편성이 성공적으로 ${isEditMode ? '수정' : '저장'}되었습니다!`);
+                navigate(isEditMode ? '/history' : '/members');
             } else {
-                alert("저장 중 오류가 발생했습니다.");
+                alert(`${isEditMode ? '수정' : '저장'}에 실패했습니다.`);
             }
         } catch (error) {
-            alert("서버와 통신할 수 없습니다.");
+            alert("서버 오류가 발생했습니다.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -215,11 +238,11 @@ export default function Result() {
                 </div>
 
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-accent-dark)', marginBottom: '12px' }}>
-                    결과를 분석하고 있습니다...
+                    편성된 조 가져오는 중..
                 </div>
                 <div style={{ fontSize: '15px', color: '#555', textAlign: 'center', lineHeight: '1.6' }}>
                     편성된 조와 과거 만남 기록을 비교하여<br/>
-                    충돌 여부 및 패널티를 계산 중입니다.
+                    어쩌구 저쩌구..
                 </div>
             </div>
         );
@@ -237,7 +260,27 @@ export default function Result() {
 
                 <div style={{display: 'flex', gap: '10px'}}>
                     <button className="btn-outline" onClick={() => navigate('/formation')}>다시 편성하기</button>
-                    <button className="btn-primary" onClick={handleSave}>DB에 최종 확정 저장</button>
+
+                    <button
+                        className="btn-primary"
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        style={{
+                            minWidth: '110px',
+                            opacity: isSaving ? 0.7 : 1,
+                            cursor: isSaving ? 'not-allowed' : 'pointer'
+                        }}
+                    >
+                        {isSaving ? (
+                            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'}}>
+                                <span className="btn-spinner"></span>
+                                저장 중...
+                            </div>
+                        ) : (
+                            'DB 저장'
+                        )}
+                    </button>
+
                 </div>
             </div>
 
@@ -345,7 +388,7 @@ export default function Result() {
 
                         {team.conflicts && team.conflicts.length > 0 && (
                             <div className="team-penalty-box">
-                                <div style={{fontWeight: 'bold', marginBottom: '5px'}}>⚠️ 겹치는 이력 발견!</div>
+                                <div style={{fontWeight: 'bold', marginBottom: '5px'}}>⚠️ 겹치는 이력 발견</div>
                                 {team.conflicts.map((conflictMsg, idx) => (
                                     <div key={idx} className="penalty-item">{conflictMsg}</div>
                                 ))}

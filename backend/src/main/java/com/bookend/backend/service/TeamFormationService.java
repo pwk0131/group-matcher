@@ -54,9 +54,6 @@ public class TeamFormationService {
 
 		// 알고리즘 코어 엔진 실행 및 결과 반환
 		return engine.formTeams(attendeeDtos, matrix, optimalTeamCount, request.currentRound());
-
-		// (참고: 최종 배포 전에는 여기서 짜여진 조(teams)를 TeamAssignment 테이블에 INSERT 하고,
-		// EncounterHistory 테이블을 UPSERT 하는 저장 로직이 추가로 들어갑니다.)
 	}
 
 	@Transactional
@@ -104,6 +101,64 @@ public class TeamFormationService {
 							return newHistory;
 						});
 
+					history.setLastMeeting(meeting);
+					historyRepository.save(history);
+				}
+			}
+		}
+	}
+
+	@Transactional
+	public void updateTeams(Long meetingId, TeamSaveRequest request) {
+		// 기존 미팅 기록 찾기
+		Meeting meeting = meetingRepository.findById(meetingId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 기록을 찾을 수 없습니다."));
+
+		// 기존 출석 횟수 롤백 및 기존 데이터 삭제
+		if (meeting.getRoundNumber() > 0) {
+			List<TeamAssignment> oldAssignments = teamAssignmentRepository.findByMeeting_MeetingId(meetingId);
+			for (TeamAssignment ta : oldAssignments) {
+				Member member = ta.getMember();
+				member.setAttendanceCount(Math.max(0, member.getAttendanceCount() - 1));
+			}
+		}
+		teamAssignmentRepository.deleteByMeeting_MeetingId(meetingId);
+		historyRepository.deleteByLastMeeting_MeetingId(meetingId);
+
+		// 미팅 정보(회차, 날짜) 업데이트
+		meeting.setRoundNumber(request.currentRound());
+		meeting.setMeetingDate(request.meetingDate());
+
+		// 새로운 배정 및 만남 이력 저장
+		for (TeamSaveRequest.TeamData team : request.teams()) {
+			for (TeamSaveRequest.MemberData memberData : team.members()) {
+				Member member = memberRepository.findById(memberData.memberId()).orElseThrow();
+				if (request.currentRound() > 0) {
+					member.setAttendanceCount(member.getAttendanceCount() + 1);
+				}
+				TeamAssignment assignment = new TeamAssignment();
+				assignment.setMeeting(meeting);
+				assignment.setMember(member);
+				assignment.setTeamName(team.teamName());
+				teamAssignmentRepository.save(assignment);
+			}
+
+			List<Long> memberIds = team.members().stream()
+				.map(TeamSaveRequest.MemberData::memberId)
+				.toList();
+
+			for (int i = 0; i < memberIds.size(); i++) {
+				for (int j = i + 1; j < memberIds.size(); j++) {
+					Long id1 = Math.min(memberIds.get(i), memberIds.get(j));
+					Long id2 = Math.max(memberIds.get(i), memberIds.get(j));
+
+					EncounterHistory history = historyRepository.findByMemberA_MemberIdAndMemberB_MemberId(id1, id2)
+						.orElseGet(() -> {
+							EncounterHistory newHistory = new EncounterHistory();
+							newHistory.setMemberA(memberRepository.getReferenceById(id1));
+							newHistory.setMemberB(memberRepository.getReferenceById(id2));
+							return newHistory;
+						});
 					history.setLastMeeting(meeting);
 					historyRepository.save(history);
 				}
