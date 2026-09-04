@@ -245,7 +245,9 @@ export default function Result() {
 
             if (response.ok) {
                 alert(`${roundText} 편성이 성공적으로 ${isEditMode ? '수정' : '저장'}되었습니다!`);
-                navigate(isEditMode ? '/history' : '/members');
+                navigate('/export', {
+                    state: { teams, currentRound, meetingDate }
+                });
             } else {
                 alert(`${isEditMode ? '수정' : '저장'}에 실패했습니다.`);
             }

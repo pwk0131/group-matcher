@@ -5,6 +5,7 @@ import Members from './pages/Members';
 import Formation from './pages/Formation';
 import Result from './pages/Result';
 import History from './pages/History';
+import Export from './pages/Export';
 import Footer from './components/Footer';
 import SettingsModal from './components/SettingsModal';
 import './index.css';
@@ -195,6 +196,8 @@ function App() {
                            element={<ProtectedRoute isAuthenticated={isAuthenticated}><Result/></ProtectedRoute>}/>
                     <Route path="/history"
                            element={<ProtectedRoute isAuthenticated={isAuthenticated}><History/></ProtectedRoute>}/>
+                    <Route path="/export"
+                           element={<ProtectedRoute isAuthenticated={isAuthenticated}><Export/></ProtectedRoute>}/>
                 </Routes>
             </main>
             {isSettingsOpen && (
