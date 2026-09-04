@@ -27,6 +27,8 @@ export default function Result() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [meetingId, setMeetingId] = useState(null);
 
+    const [allMembers, setAllMembers] = useState([]);
+
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
@@ -102,6 +104,13 @@ export default function Result() {
         setIsLoading(true);
         try {
             const res = await fetch(`${API_BASE_URL}/api/history`, { credentials: 'include' });
+
+            const memRes = await fetch(`${API_BASE_URL}/api/members`, { credentials: 'include' });
+            if (memRes.ok) {
+                const memData = await memRes.json();
+                setAllMembers(memData.filter(m => !m.isInactive));
+            }
+
             if (res.ok) {
                 const data = await res.json();
                 setHistoryList(data);
@@ -218,10 +227,27 @@ export default function Result() {
         }
     };
 
+    const participatingIds = new Set();
+    teams.forEach(t => t.members.forEach(m => participatingIds.add(m.memberId)));
+    benchMembers.forEach(m => participatingIds.add(m.memberId));
+
+    const availableMembers = allMembers.filter(m => !participatingIds.has(m.memberId));
+
+    const handleAddExtraMember = (e) => {
+        const memberId = Number(e.target.value);
+        if (!memberId) return;
+
+        const memberToAdd = allMembers.find(m => m.memberId === memberId);
+        if (memberToAdd) {
+            setBenchMembers([...benchMembers, memberToAdd]);
+        }
+
+        e.target.value = "";
+    };
+
     if (isLoading) {
         return (
             <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-                {/* 앞서 Formation.css에 만든 조 편성 애니메이션 CSS 클래스를 그대로 재사용합니다 */}
                 <div className="formation-loader-container">
                     <div className="team-box">
                         <div className="member-dot"></div>
@@ -324,12 +350,32 @@ export default function Result() {
             </div>
 
             <div className="bench-container" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'bench')}>
-                <div className="bench-header">
-                    <span>임시 박스</span>
-                    <span style={{fontSize: '13px', color: '#888', fontWeight: 'normal'}}>
-                        {benchMembers.length > 0 ? `${benchMembers.length}명 대기 중` : '이동할 조원을 여기에 끌어다 놓으세요.'}
-                    </span>
+                <div className="bench-header" style={{justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+
+                        <span>임시 박스</span>
+
+                        <span style={{fontSize: '13px', color: '#888', fontWeight: 'normal'}}>
+                            {benchMembers.length > 0 ? `${benchMembers.length}명 대기 중` : '이동할 조원을 여기에 끌어다 놓으세요.'}
+                        </span>
+
+                    </div>
+
+                    {availableMembers.length > 0 && (
+                        <select
+                            className="mobile-move-select"
+                            onChange={handleAddExtraMember}
+                            defaultValue=""
+                            style={{padding: '6px 10px', fontSize: '13px', backgroundColor: '#fff'}}
+                        >
+                            <option value="" disabled>추가 참석자 부르기</option>
+                            {availableMembers.map(m => (
+                                <option key={m.memberId} value={m.memberId}>{m.name}</option>
+                            ))}
+                        </select>
+                    )}
                 </div>
+
                 <div className="bench-list">
                     {benchMembers.map(member => (
                         <div key={member.memberId}
