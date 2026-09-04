@@ -16,6 +16,7 @@ export default function Result() {
 
     const [logs, setLogs] = useState([]);
     const [isLogOpen, setIsLogOpen] = useState(false);
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +54,13 @@ export default function Result() {
     }, [location, navigate]);
 
     const handleDragStart = (e, member, fromLocation) => {
-        setDragInfo({ member, fromLocation });
+        e.stopPropagation();
+        setDragInfo({ type: 'member', member, fromLocation });
+    };
+
+    const handleTeamDragStart = (e, teamIndex) => {
+        e.stopPropagation();
+        setDragInfo({ type: 'team', teamIndex });
     };
 
     const handleDragOver = (e) => {
@@ -65,6 +72,21 @@ export default function Result() {
             moveMember(activeMoveMember.member, activeMoveMember.fromLocation, toLocation);
             setActiveMoveMember(null); // 이동 후 모달 닫기
         }
+    };
+
+    const swapTeams = (fromIndex, toIndex) => {
+        if (fromIndex === toIndex) return;
+        const newTeams = [...teams];
+
+        const temp = newTeams[fromIndex];
+        newTeams[fromIndex] = newTeams[toIndex];
+        newTeams[toIndex] = temp;
+
+        const tempName = newTeams[fromIndex].teamName;
+        newTeams[fromIndex].teamName = newTeams[toIndex].teamName;
+        newTeams[toIndex].teamName = tempName;
+
+        setTeams(newTeams);
     };
 
     const moveMember = (member, fromLocation, toLocation) => {
@@ -174,9 +196,16 @@ export default function Result() {
 
     const handleDrop = (e, toLocation) => {
         e.preventDefault();
+        e.stopPropagation();
+
         if (!dragInfo) return;
-        const { member, fromLocation } = dragInfo;
-        moveMember(member, fromLocation, toLocation);
+
+        if (dragInfo.type === 'member') {
+            moveMember(dragInfo.member, dragInfo.fromLocation, toLocation);
+        } else if (dragInfo.type === 'team' && toLocation !== 'bench') {
+            swapTeams(dragInfo.teamIndex, toLocation);
+        }
+
         setDragInfo(null);
     };
 
@@ -339,15 +368,24 @@ export default function Result() {
                 </div>
             )}
 
-            <div style={{marginBottom: '15px'}}>
+            <div style={{marginBottom: '15px', display: 'flex', gap: '10px'}}>
                 <button
                     className="btn-outline"
-                    onClick={() => setIsLogOpen(!isLogOpen)}
+                    onClick={() => setIsHelpOpen(true)}
                     style={{fontSize: '13px', padding: '6px 12px'}}
                 >
-                    {isLogOpen ? " ▶ 상세 로그 숨기기" : "▶ 상세 로그 보기"}
+                    💡 사용법 안내
+                </button>
+
+                <button
+                    className="btn-outline"
+                    onClick={() => setIsLogOpen(true)}
+                    style={{fontSize: '13px', padding: '6px 12px'}}
+                >
+                    상세 편성 로그
                 </button>
             </div>
+
 
             <div className="bench-container" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'bench')}>
                 <div className="bench-header" style={{justifyContent: 'space-between'}}>
@@ -405,31 +443,82 @@ export default function Result() {
                 </div>
             </div>
 
-            {isLogOpen && logs.length > 0 && (
-                <div className="log-console-container">
-                    <div className="log-console-header">
-                        <span>Terminal - Team Formation Algorithm</span>
-                        <span style={{fontSize: '12px', color: '#888'}}>Running... Done!</span>
+            {isLogOpen && (
+                <div className="about-modal-overlay" onClick={() => setIsLogOpen(false)}>
+                    <div className="about-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', padding: '25px', width: '90%' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                            <h3 style={{ margin: 0, color: 'var(--color-accent-dark)' }}>
+                                알고리즘 편성 로그
+                            </h3>
+                            <button className="settings-btn" onClick={() => setIsLogOpen(false)} style={{ fontSize: '18px', padding: '4px' }}>✕</button>
+                        </div>
+
+                        <div className="clean-log-container">
+                            {logs.length > 0 ? logs.map((logLine, idx) => (
+                                <div key={idx} className="clean-log-item">{logLine}</div>
+                            )) : (
+                                <div style={{ color: '#888', textAlign: 'center', padding: '30px 0' }}>로그 데이터가 없습니다.</div>
+                            )}
+                        </div>
+
+                        <button className="btn-primary" style={{ width: '100%', marginTop: '20px' }} onClick={() => setIsLogOpen(false)}>
+                            닫기
+                        </button>
                     </div>
-                    <div className="log-console-body">
-                        {logs.map((logLine, idx) => (
-                            <div key={idx}>{logLine}</div>
-                        ))}
+                </div>
+            )}
+
+            {isHelpOpen && (
+                <div className="about-modal-overlay" onClick={() => setIsHelpOpen(false)}>
+                    <div className="about-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '420px', padding: '25px' }}>
+                        <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--color-accent-dark)' }}>
+                            💡 조 편성 결과 수정 가이드
+                        </h3>
+
+                        <ul style={{ paddingLeft: '20px', lineHeight: '1.7', color: '#555', fontSize: '14px', margin: 0, wordBreak: 'keep-all' }}>
+                            <li style={{ marginBottom: '8px' }}>
+                                <b>조원 이동:</b> 이름을 잡아 다른 조로 <b>드래그</b>하거나, 우측의 <b>이동 버튼(⇄)</b>을 눌러 간편하게 옮겨보세요.
+                            </li>
+                            <li style={{ marginBottom: '8px' }}>
+                                <b>조 통째로 교체:</b> 조 이름 옆의 <b>점자(⠿)</b> 아이콘을 잡고 다른 조로 드래그하면 두 조의 멤버가 통째로 맞바뀝니다.
+                            </li>
+                            <li style={{ marginBottom: '8px' }}>
+                                <b>임시 보류:</b> 배치하기 애매한 조원은 <b>임시 보류 박스</b>에 넣어둘 수 있습니다. (※ 보류 박스를 모두 비워야 DB 저장이 가능합니다)
+                            </li>
+                            <li style={{ marginBottom: '8px' }}>
+                                <b>지각/추가 인원:</b> 뒤늦게 참석한 사람은 보류 박스 우측의 <b>'추가 참석자 부르기'</b>에서 즉시 소환할 수 있습니다.
+                            </li>
+                            <li>
+                                <b>페널티 경고:</b> 조를 바꿀 때 과거 만남 이력과 겹치는 사람이 생기면, 즉시 <b>노란색 경고창</b>이 떠서 알려줍니다.
+                            </li>
+                        </ul>
+
+                        <button className="btn-primary" style={{ width: '100%', marginTop: '25px' }} onClick={() => setIsHelpOpen(false)}>
+                            확인했습니다
+                        </button>
                     </div>
                 </div>
             )}
 
             <div className="result-board">
                 {teams.map((team, teamIndex) => (
-                    <div key={team.teamName || teamIndex} className="team-column" onDragOver={handleDragOver}
-                         onDrop={(e) => handleDrop(e, teamIndex)}>
-                        <div className="team-header">
-                            <span>{team.teamName}</span>
-                            <span style={{
-                                fontSize: '14px',
-                                color: '#888',
-                                fontWeight: 'normal'
-                            }}>{team.members.length}명</span>
+                    <div
+                        key={team.teamName || teamIndex}
+                        className="team-column"
+                        draggable
+                        onDragStart={(e) => handleTeamDragStart(e, teamIndex)}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, teamIndex)}
+                    >
+
+                        <div className="team-header" style={{cursor: 'grab'}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <span style={{color: '#ccc', cursor: 'grab'}}>⠿</span>
+                                <span>{team.teamName}</span>
+                            </div>
+                            <span style={{fontSize: '14px', color: '#888', fontWeight: 'normal'}}>
+                                {team.members.length}명
+                            </span>
                         </div>
 
                         {team.conflicts && team.conflicts.length > 0 && (
@@ -479,10 +568,16 @@ export default function Result() {
             </div>
             {activeMoveMember && (
                 <div className="about-modal-overlay" onClick={() => setActiveMoveMember(null)}>
-                    <div className="about-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '350px', padding: '25px' }}>
-                        <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--color-accent-dark)', textAlign: 'center' }}>
+                    <div className="about-modal-content" onClick={e => e.stopPropagation()}
+                         style={{maxWidth: '350px', padding: '25px'}}>
+                        <h3 style={{
+                            marginTop: 0,
+                            marginBottom: '20px',
+                            color: 'var(--color-accent-dark)',
+                            textAlign: 'center'
+                        }}>
                             어디로 이동할까요?
-                            <div style={{ fontSize: '14px', color: '#666', fontWeight: 'normal', marginTop: '6px' }}>
+                            <div style={{fontSize: '14px', color: '#666', fontWeight: 'normal', marginTop: '6px' }}>
                                 <b>{activeMoveMember.member.name}</b> 님의 새 조를 선택해주세요.
                             </div>
                         </h3>

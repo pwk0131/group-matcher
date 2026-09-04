@@ -135,36 +135,36 @@
     line-height: 1.4;
 }
 
-/* ... 기존 코드 유지 ... */
-
-.log-console-container {
-    background-color: #1e1e1e;
+.clean-log-container {
+    background-color: #f8f9fa;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    margin-bottom: 25px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.log-console-header {
-    background-color: #2d2d2d;
-    color: #ccc;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.log-console-body {
-    padding: 15px;
-    max-height: 250px;
+    max-height: 400px;
     overflow-y: auto;
-    font-family: 'Courier New', Courier, monospace;
+    padding: 10px;
+}
+
+.clean-log-item {
+    padding: 10px 12px;
     font-size: 13.5px;
-    line-height: 1.6;
-    color: #a6e22e; /* 형광 연두색 텍스트 */
+    color: #444;
+    border-bottom: 1px dashed #eaeaea;
+    line-height: 1.5;
+    word-break: keep-all;
     white-space: pre-wrap;
+}
+
+.clean-log-item:first-child {
+    font-weight: bold;
+    color: var(--color-accent-dark);
+}
+
+.clean-log-item:last-child {
+    border-bottom: none;
+}
+
+.clean-log-item:hover {
+    background-color: #f1f3f5;
 }
 
 /* 벤치(임시 대기소) 스타일 */

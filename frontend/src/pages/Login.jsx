@@ -87,12 +87,26 @@ export default function Login({ onLoginSuccess }) {
                         {isLoading ? (
                             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'}}>
                                 <span className="btn-spinner"></span>
-                                정보 확인 중...
+                                로그인 중...
                             </div>
                         ) : (
                             '접속하기'
                         )}
                     </button>
+
+                    <div className="mobile-warning-box">
+                        <div style={{
+                            fontSize: '13.5px',
+                            color: 'var(--color-accent-dark)',
+                            fontWeight: 'bold',
+                            marginBottom: '6px'
+                        }}>
+                            📱 접속 환경 안내
+                        </div>
+                        본 대시보드는 <b>PC(데스크톱/노트북) 환경</b>에 최적화된 관리툴입니다.<br/>
+                        모바일 기기로 접속 시 레이아웃 깨짐이 발생할 수 있으니 가급적 PC 사용을 권장합니다.
+                    </div>
+
                 </form>
             </div>
         </div>
